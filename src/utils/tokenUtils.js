@@ -49,7 +49,7 @@ export function generateAccessToken(refreshToken, client) {
     client.clientSecretHash
   );
   const payload = verifyToken(refreshToken, process.env.CLIENT_PUBLIC_KEY);
-  payload.exp = Math.floor(Date.now() / 1000) + 60 * 15; // 15 minutes
+  payload.exp = Math.floor(Date.now() / 1000) + 60 * 15;
   if (!payload) {
     return null;
   }
