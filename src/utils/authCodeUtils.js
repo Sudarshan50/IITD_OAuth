@@ -4,7 +4,7 @@ import authorization_code from "../models/authorization_code.js";
 
 export async function generateAuthorizationCode(clientId, userId) {
   const code = crypto.randomBytes(20).toString("hex");
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 2 * 60 * 1000); //expiry time 2min....
   const authCode = new authorization_code({
     code,
     clientId,

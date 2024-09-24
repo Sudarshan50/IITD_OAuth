@@ -17,7 +17,7 @@ passport.use(
     {
       clientID: process.env.MICROSOFT_GRAPH_CLIENT_ID,
       clientSecret: process.env.MICROSOFT_GRAPH_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/oauth/auth/microsoft/callback",
+      callbackURL: "http://localhost:3000/api/oauth/auth/microsoft/callback",
       scope: ["user.read"],
       tenant: process.env.MICROSOFT_GRAPH_TENANT_ID,
     },

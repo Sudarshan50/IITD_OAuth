@@ -18,12 +18,13 @@ oAuthRouter.get(
   (req, res) => {
     res.cookie("uId", req.user.id);
     res.redirect(
-      `/oauth/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=http://localhost:3001`
+      `/api/oauth/authorize?client_id=${req.cookies.client_id}&redirect_uri=${req.cookies.redirect_uri}`
     );
   }
 );
 
 oAuthRouter.get("/authorize", auth.authorize);
 oAuthRouter.get("/callback", auth.callback);
+oAuthRouter.get("/logout", auth.logout);
 
 export default oAuthRouter;

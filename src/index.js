@@ -28,23 +28,18 @@ app.use(
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(
+  cors({
+    origin : "*",
+    credentials: true,
+  })
+);
 
-
-
-
-if (process.env.NODE_ENV == "development") {
-  app.use(
-    cors({
-      origin: "*",
-      credentials: true,
-    })
-  );
-}
 
 //importing routes
-app.use("/admin", adminRouter);
-app.use("/oauth", oAuthRouter);
-app.use("/token", tokenRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/oauth", oAuthRouter);
+app.use("/api/token", tokenRouter);
 
 db().then(() => {
   app.listen(port, () => {

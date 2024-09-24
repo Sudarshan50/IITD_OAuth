@@ -3,7 +3,7 @@ import token from "../controllers/tokenContoller.js";
 
 const tokenRouter = e.Router();
 
-tokenRouter.get("/verify", token.verify);
-
+tokenRouter.post("/verify", token.verify);
+tokenRouter.post("/generateAccessToken", token.generateAccessToken);
 export default tokenRouter;
 

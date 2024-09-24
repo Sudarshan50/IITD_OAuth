@@ -1,10 +1,10 @@
+/** @type {import('tailwindcss').Config} */
 const withMT = require("@material-tailwind/react/utils/withMT");
-const { plugin } = require("mongoose");
-
-module.exports = withMT({
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugin:[]
-});
+export default withMT ({
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+    theme: {
+        extend: {},
+    },
+    darkMode: "class",
+    plugins: [],
+}) ;

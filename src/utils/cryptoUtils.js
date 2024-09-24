@@ -29,6 +29,7 @@ export function signData(data, privateKey) {
     const signature = sign.sign(
       {
         key: privateKey,
+        padding: crypto.constants.RSA_PKCS1_PADDING,
       },
       "base64" // Signature output encoding
     );
@@ -45,6 +46,7 @@ export function verifySignature(data, signature, publicKey) {
     const verify = crypto.createVerify("RSA-SHA256");
     verify.update(data);
     verify.end();
+    console.log(publicKey);
     const isVerified = verify.verify(publicKey, signature, "base64");
     return isVerified;
   } catch (error) {
