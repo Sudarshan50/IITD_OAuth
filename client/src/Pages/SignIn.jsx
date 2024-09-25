@@ -1,142 +1,98 @@
-import { useState } from "react";
-import logo from "../pages/devclub_logo.png";
-import { Typography, Input, Button } from "@material-tailwind/react";
-import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { useLocation } from "react-router-dom";
-// import axios from "axios";
+import logo from "../pages/devclub_logo.png";
 
-export function SignIn() {
+const LoginPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const client_name = query.get("client_name");
-    const handleMicrosoftSignIn = async () => {
-        try {
-            window.location.href = "/api/oauth/auth/microsoft";
-        } catch (err) {
-            throw new Error(err);
-        }
+    const handleMicrosoftLogin = () => {
+        window.location.href = "/api/oauth/auth/microsoft";
     };
-    const [passwordShown, setPasswordShown] = useState(false);
-    const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Yahan se Kuch Ni Hota..");
+    };
 
     return (
-        <section className="grid h-screen items-center p-8 text-center">
-            <div>
-                <Typography
-                    variant="h3"
-                    color="blue-gray"
-                    className="mb-2"
-                >
-                    Welcome to {client_name},
-                </Typography>
-                <Typography className="mb-16 text-[18px] font-normal text-gray-600">
-                    Enter your email and password to sign in
-                </Typography>
-                <form
-                    action="#"
-                    className="mx-auto max-w-[24rem] text-left"
-                >
-                    <div className="mb-6">
-                        <label htmlFor="email">
-                            <Typography
-                                variant="small"
-                                className="mb-2 block font-medium text-gray-900"
-                            >
-                                Your Email
-                            </Typography>
-                        </label>
-                        <Input
-                            id="email"
-                            color="gray"
-                            size="lg"
-                            type="email"
-                            name="email"
-                            placeholder="name@mail.com"
-                            className="focus:border-t-primary w-full border-t-blue-gray-200 placeholder:opacity-100"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label htmlFor="password">
-                            <Typography
-                                variant="small"
-                                className="mb-2 block font-medium text-gray-900"
-                            >
-                                Password
-                            </Typography>
-                        </label>
-                        <Input
-                            size="lg"
-                            placeholder="********"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                            className="focus:border-t-primary w-full border-t-blue-gray-200 placeholder:opacity-100"
-                            type={passwordShown ? "text" : "password"}
-                            icon={
-                                <i onClick={togglePasswordVisiblity}>
-                                    {passwordShown ? (
-                                        <EyeIcon className="h-5 w-5" />
-                                    ) : (
-                                        <EyeSlashIcon className="h-5 w-5" />
-                                    )}
-                                </i>
-                            }
-                        />
-                    </div>
-                    <Button
-                        color="gray"
-                        size="lg"
-                        className="mt-6"
-                        fullWidth
-                    >
-                        sign in
-                    </Button>
-                    <div className="!mt-4 flex justify-end">
-                        <Typography
-                            as="a"
-                            href="#"
-                            color="blue-gray"
-                            variant="small"
-                            className="font-medium"
+        <div className="flex min-h-screen flex-col justify-between bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            {/* Login Section */}
+            <div className="flex flex-grow items-center justify-center">
+                <div className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
+                    {/* Left side: Login Form */}
+                    <div className="w-1/2 p-8">
+                        <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {client_name}</h2>
+
+                        {/* Login Form */}
+                        <form
+                            onSubmit={handleSubmit}
+                            className="space-y-6"
                         >
-                            Forgot password
-                        </Typography>
+                            {/* Email */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="mt-1 block w-full rounded-md border p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    required
+                                />
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    className="mt-1 block w-full rounded-md border p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    required
+                                />
+                            </div>
+
+                            {/* Submit Button */}
+                            <div>
+                                <button
+                                    type="submit"
+                                    className="w-full rounded-md bg-indigo-500 px-4 py-3 font-semibold text-white hover:bg-indigo-600"
+                                >
+                                    Login
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Microsoft Login Button */}
+                        <div className="mt-6">
+                            <button
+                                onClick={handleMicrosoftLogin}
+                                className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
+                            >
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+                                    alt="Microsoft Logo"
+                                    className="mr-2 h-5 w-5"
+                                />
+                                Login with Microsoft
+                            </button>
+                        </div>
                     </div>
-                    <Button
-                        variant="outlined"
-                        size="lg"
-                        className="mt-6 flex h-12 items-center justify-center gap-2"
-                        fullWidth
-                        onClick={handleMicrosoftSignIn}
-                    >
+                    <div className="flex w-1/2 items-center justify-center">
                         <img
                             src={logo}
-                            alt="logo"
-                            className="mr-3 h-6 w-10 bg-cover"
-                        />{" "}
-                        Sign in with Devclub
-                    </Button>
-                    <Typography
-                        variant="small"
-                        color="gray"
-                        className="!mt-4 text-center font-normal"
-                    >
-                        Not registered?{" "}
-                        <a
-                            href="#"
-                            className="font-medium text-gray-900"
-                        >
-                            Create account
-                        </a>
-                    </Typography>
-                </form>
+                            alt="DevClub Logo"
+                            className="h-full object-contain"
+                        />
+                    </div>
+                </div>
             </div>
-        </section>
+            <footer className="bg-blue-gray-900 py-4 text-center text-white">
+                <p className="text-sm">
+                    Powered by <span className="font-bold">DevClub</span>
+                </p>
+            </footer>
+        </div>
     );
-}
+};
 
-export default SignIn;
+export default LoginPage;
 

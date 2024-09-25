@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import ClientRegistrationForm from "./components/registeration";
+import OnboardingForm from "./components/onboarding";
 
 function App() {
     return (
@@ -14,6 +15,10 @@ function App() {
                 <Route
                     path="/signin"
                     element={<SignIn />}
+                />
+                <Route
+                    path="/onboarding"
+                    element={<OnboardingForm />}
                 />
                 <Route
                     path="/admin/reg"
