@@ -3,7 +3,7 @@ import logo from "../pages/devclub_logo.png";
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import login_background from "./login_background.svg";
-import microsoft_logo from "./microsoft_logo.svg"
+import microsoft_logo from "./microsoft_logo.svg";
 import "./SignIn.css";
 // import axios from "axios";
 
@@ -15,20 +15,40 @@ const SignIn = () => {
                     <div className="content">
                         <h1>Welcome Back 👋</h1>
                         <p>Today is a new day. It's your day. You shape it. Sign in to start managing your projects.</p>
-                        <form class="login-form">
+                        <form className="login-form">
                             <div className="fields">
-                            <label for="email">Email</label>
-                          <input type="email" id="email" placeholder="Example@email.com" required />
-                          <label for="password">Password</label>
-                          <input type="password" id="password" placeholder="At least 8 characters" required />
+                                <label for="email">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    placeholder="Example@email.com"
+                                    required
+                                />
+                                <label for="password">Password</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="At least 8 characters"
+                                    required
+                                />
                             </div>
-                        <a href="" class="forgot-password">Forgot Password?</a>
-                          <button type="submit" class="sign-in-btn">Sign in</button>
+                            <a
+                                href=""
+                                className="forgot-password"
+                            >
+                                Forgot Password?
+                            </a>
+                            <button
+                                type="submit"
+                                className="sign-in-btn"
+                            >
+                                Sign in
+                            </button>
                         </form>
-                        <div class="or-container">
-                            <hr class="line" />
-                            <span class="or-text">Or</span>
-                            <hr class="line" />
+                        <div className="or-container">
+                            <hr className="line" />
+                            <span className="or-text">Or</span>
+                            <hr className="line" />
                         </div>
                         <button className="btn">
                             <img src={microsoft_logo} />
