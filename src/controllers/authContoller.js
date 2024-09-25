@@ -42,6 +42,11 @@ auth.authorize = async (req, res) => {
     if (!clientCheck || !clientCheck.grants.includes("authorization_code")) {
       return res.status(400).json("Invalid grant type");
     }
+    const user = await User.findOne({ msId: req.user.id });
+    if (user.onboarding === false) {
+      res.redirect("http://localhost:5173/onboarding");
+      return;
+    }
     const state = await generateStateParameter();
     const auth_code = await generateAuthorizationCode(client_id, req.user.id);
     await logUserAction(req.user.id, client_id, "Login Initiated");
@@ -84,6 +89,29 @@ auth.client_auth_verify = async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err.message);
+  }
+};
+
+auth.onboarding = async (req, res) => {
+  try {
+    const { hostel, msId, dateOfBirth, instagramId, mobileNo } = req.body;
+    const user = await User.findOne({ msId: msId });
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+    user.hostel = hostel;
+    user.dateOfBirth = dateOfBirth;
+    user.instagramId = instagramId;
+    user.mobileNo = mobileNo;
+    user.onboarding = true;
+    await user.save();
+    req.user = {
+      id: msId,
+    };
+    res.status(200).json("Onboarding Successful");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal Server Error");
   }
 };
 

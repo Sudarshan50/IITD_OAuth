@@ -85,11 +85,7 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
-            <footer className="bg-blue-gray-900 py-4 text-center text-white">
-                <p className="text-sm">
-                    Powered by <span className="font-bold">DevClub</span>
-                </p>
-            </footer>
+            
         </div>
     );
 };
