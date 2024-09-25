@@ -23,15 +23,20 @@ passport.use(
     },
     function async(accessToken, refreshToken, profile, done) {
       process.nextTick(async function () {
-        const user = await User.findOne({ instiId: profile.id });
-        if (!user) {
-          const newUser = new User({
-            username: profile.displayName,
-            instiId: profile.id,
-            email: profile.emails[0].value,
-            kerberosId: profile.emails[0].value.split("@")[0],
-          });
-          await newUser.save();
+        try {
+          const user = await User.findOne({ msId: profile.id });
+          if (!user) {
+            const newUser = new User({
+              username: profile.displayName,
+              msId: profile.id,
+              email: profile.emails[0].value,
+              kerberosId: profile.emails[0].value.split("@")[0],
+            });
+            await newUser.save();
+          }
+        } catch (err) {
+          console.log(err);
+          throw new Error("Error in passport strategy");
         }
 
         return done(null, profile);

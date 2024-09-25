@@ -1,72 +1,90 @@
 import oauth_client from "../models/oauth_client.js";
-import { generateAuthorizationCode } from "../utils/authCodeUtils.js";
-import { generateTokens } from "../utils/tokenUtils.js";
-import { decryption } from "../config/key.js";
+import bcrpyt from "bcryptjs";
+import {
+  generateAuthorizationCode,
+  useAuthorizationCode,
+} from "../utils/authCodeUtils.js";
 import User from "../models/user.js";
 import {
-  signData,
-  verifySignature,
-  decryptPrivateKey,
-} from "../utils/cryptoUtils.js";
-import crypto from "crypto";
+  generateStateParameter,
+  validateStateParameter,
+} from "../utils/stateManager.js";
+import { logUserAction } from "../utils/logFunction.js";
 
 let auth = {};
+auth.verify = async (req, res) => {
+  try {
+    const { client_id, redirect_uri } = req.query;
+    const check = await oauth_client.findOne({
+      clientId: client_id,
+      redirectUri: { $in: [redirect_uri] },
+    });
+    if (!check) {
+      return res.status(400).json("Invalid client or redirect uri");
+    }
+    res.cookie("client_id", client_id).cookie("redirect_uri", redirect_uri);
+    res.redirect(
+      `http://localhost:5173/signin?client_name=${check.clientName}&client_id=${client_id}&redirect_uri=${redirect_uri}`
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal Server Error", error);
+  }
+};
 
 auth.authorize = async (req, res) => {
-  const { client_id, redirect_uri } = req.query;
-  const check = await oauth_client.findOne({
-    clientId: client_id,
-    redirectUri: { $in: [redirect_uri] },
-  });
-  if (!check) {
-    return res.status(400).json("Invalid client or redirect uri");
+  try {
+    const { client_id, redirect_uri } = req.query;
+    const clientCheck = await oauth_client.findOne({
+      clientId: client_id,
+      redirectUri: { $in: [redirect_uri] },
+    });
+    if (!clientCheck || !clientCheck.grants.includes("authorization_code")) {
+      return res.status(400).json("Invalid grant type");
+    }
+    const state = await generateStateParameter();
+    const auth_code = await generateAuthorizationCode(client_id, req.user.id);
+    await logUserAction(req.user.id, client_id, "Login Initiated");
+    res.redirect(
+      `${redirect_uri}/authorise?grant_type=auth_code&code=${auth_code}&state=${state}`
+    );
+  } catch (error) {
+    await logUserAction(req.user.id, req.cookies.client_id, error.message);
+    console.log(error);
+    res.status(500).json(error.message);
   }
-  const code = await generateAuthorizationCode(client_id, req.cookies.uId);
-  const privateKeyNew = decryption(
-    check.encryptedprivateKey,
-    check.clientSecretHash
-  );
-  console.log(privateKeyNew);
-  const authCode = signData(code, privateKeyNew);
-  const state = crypto.randomBytes(5).toString("hex");
-  req.session.oauthState = state;
-  req.session.signature = authCode;
-  const authorization_url = `callback?code=${code}&client_id=${client_id}&state=${state}`;
-  res.redirect(authorization_url);
 };
 
-auth.callback = async (req, res) => {
-  const { code, state, client_id } = req.query;
-  const signature = req.session.signature;
-  const client = await oauth_client.findOne({ clientId: client_id });
-  const extractPubKey = process.env.CLIENT_PUBLIC_KEY;
-  const authCode = verifySignature(code, signature, extractPubKey);
-  console.log(authCode);
-  if (!client || !authCode) {
-    return res.status(400).send("Invalid client");
-  }
-  if (state !== req.session.oauthState) {
-    return res.status(400).send("Invalid state");
-  }
-  const user = await User.findOne({ instiId: req.cookies.uId });
-  if (!user) {
-    return res.status(400).send("User not found");
-  }
-  const token = generateTokens(user, client);
-  res
-    .cookie("access_token", token.accessToken)
-    .cookie("refresh_token", token.refreshToken);
-  res.redirect(client.redirectUri[0]);
-};
-auth.logout = async (req, res) => {
-  req.logout(function (err) {
-    if (!err) {
-      res.clearCookie("access_token");
-      res.clearCookie("refresh_token");
-      res.status(200).json("Logged out successfully");
-      return;
+auth.client_auth_verify = async (req, res) => {
+  try {
+    const { client_id, auth_code, client_secret, state } = req.body;
+    const client = await oauth_client.findOne({ clientId: client_id });
+    const checkSecret = await bcrpyt.compare(
+      client_secret,
+      client.clientSecretHash
+    );
+    const checkState = await validateStateParameter(state);
+    if (!client || !checkSecret || !checkState) {
+      return res.status(400).json("Invalid Credentials");
     }
-  });
+    const authCodeData = await useAuthorizationCode(auth_code);
+    const userId = authCodeData.userId;
+    const user = await User.findOne({ msId: userId });
+    if (!user) {
+      return res.status(400).json("User not found");
+    }
+    if (!user.authorizedClients.includes(client_id)) {
+      user.authorizedClients.push(client_id);
+      await user.save();
+    }
+    if (client.scope.includes("read")) {
+      await logUserAction(userId, client_id, "Read Access Granted");
+      console.log(req.isAuthenticated());
+      return res.status(200).json(user);
+    }
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
 };
 
 export default auth;

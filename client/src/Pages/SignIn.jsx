@@ -2,14 +2,18 @@ import { useState } from "react";
 import logo from "../pages/devclub_logo.png";
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+import { useLocation } from "react-router-dom";
 // import axios from "axios";
 
 export function SignIn() {
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const client_name = query.get("client_name");
     const handleMicrosoftSignIn = async () => {
         try {
-            window.location.href = "http://localhost:3000/api/oauth/login?client_id=eea00f3408e61ed4d8ff7975caabe91ffdcdc83a&redirect_uri=http://localhost:5173";
+            window.location.href = "/api/oauth/auth/microsoft";
         } catch (err) {
-            console.log(err);
+            throw new Error(err);
         }
     };
     const [passwordShown, setPasswordShown] = useState(false);
@@ -23,7 +27,7 @@ export function SignIn() {
                     color="blue-gray"
                     className="mb-2"
                 >
-                    Sign In
+                    Welcome to {client_name},
                 </Typography>
                 <Typography className="mb-16 text-[18px] font-normal text-gray-600">
                     Enter your email and password to sign in
@@ -111,7 +115,7 @@ export function SignIn() {
                         <img
                             src={logo}
                             alt="logo"
-                            className="h-6 w-10 mr-3 bg-cover"
+                            className="mr-3 h-6 w-10 bg-cover"
                         />{" "}
                         Sign in with Devclub
                     </Button>

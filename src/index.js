@@ -9,7 +9,7 @@ import oAuthRouter from "./routes/oAuth.js";
 import session from "express-session";
 import methodOverride from "method-override";
 import passport from "./config/passport.js";
-import tokenRouter from "./routes/token.js";
+import {connectToRedis} from "./lib/redis.js";
 const app = express();
 const port = process.env.PORT || 3000;
 dotenv.config();
@@ -30,17 +30,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(
   cors({
-    origin : "*",
+    origin: "*",
     credentials: true,
   })
 );
 
-
 //importing routes
 app.use("/api/admin", adminRouter);
 app.use("/api/oauth", oAuthRouter);
-app.use("/api/token", tokenRouter);
 
+connectToRedis();
 db().then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

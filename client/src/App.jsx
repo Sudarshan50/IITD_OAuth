@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignIn from "./pages/SignIn";
 import Profile from "./pages/Profile";
+import SignIn from "./pages/SignIn";
 import ClientRegistrationForm from "./components/registeration";
 
 function App() {
@@ -9,13 +9,16 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={<Profile/>}
-                    ></Route>
+                    element={<Profile />}
+                ></Route>
                 <Route
-                    path="/login"
+                    path="/signin"
                     element={<SignIn />}
                 />
-                <Route path="/admin/reg" element = {<ClientRegistrationForm/>}/>
+                <Route
+                    path="/admin/reg"
+                    element={<ClientRegistrationForm />}
+                />
             </Routes>
         </BrowserRouter>
     );

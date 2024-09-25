@@ -1,11 +1,9 @@
 import e from "express";
-import oAuth from "../controllers/oAuthController.js";
 import auth from "../controllers/authContoller.js";
 import passport from "passport";
 
 const oAuthRouter = e.Router();
 
-oAuthRouter.get("/login", oAuth.login);
 
 oAuthRouter.get(
   "/auth/microsoft",
@@ -16,15 +14,16 @@ oAuthRouter.get(
   "/auth/microsoft/callback",
   passport.authenticate("microsoft", { failureRedirect: "/login" }),
   (req, res) => {
-    res.cookie("uId", req.user.id);
+    res.cookie("msId", req.user.id);
     res.redirect(
       `/api/oauth/authorize?client_id=${req.cookies.client_id}&redirect_uri=${req.cookies.redirect_uri}`
     );
   }
 );
-
+oAuthRouter.get("/verify", auth.verify);
 oAuthRouter.get("/authorize", auth.authorize);
-oAuthRouter.get("/callback", auth.callback);
-oAuthRouter.get("/logout", auth.logout);
+oAuthRouter.post("/auth_verify", auth.client_auth_verify);
+// oAuthRouter.get("/callback", auth.callback);
+// oAuthRouter.get("/logout", auth.logout);
 
 export default oAuthRouter;
