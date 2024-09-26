@@ -3,6 +3,8 @@ import log from "../models/log.js";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import Admin from "../models/admin.js";
+import jwt from "jsonwebtoken";
 
 let admin = {};
 
@@ -40,6 +42,49 @@ admin.register = async (req, res) => {
   }
 };
 
+admin.signIn = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    const findAdmin = await Admin.findOne({ userName: userName });
+    if (!findAdmin) {
+      return res.status(404).json("Admin not found");
+    }
+    const checkPassword = await bcrypt.compare(password, findAdmin.password);
+    if (!checkPassword) {
+      return res.status(400).json("Invalid Credentials");
+    }
+    const token = jwt.sign({ id: findAdmin._id }, process.env.ADMIN_KEY, {
+      expiresIn: "1h",
+    });
+    res.cookie("token", token, {
+      maxAge: 3600000,
+      sameSite: "none",
+    });
+    res.status(200).json({ token });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Internal Server Error");
+  }
+};
+admin.signUp = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    const findAdmin = await Admin.findOne({ userName: userName });
+    if (findAdmin) {
+      return res.status(400).json("Admin already exists");
+    }
+    const hashPass = await bcrypt.hash(password, 10);
+    const newAdmin = new Admin({
+      userName: userName,
+      password: hashPass,
+    });
+    await newAdmin.save();
+    res.status(201).json("Admin created successfully");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Internal Server Error");
+  }
+};
 admin.getAllClients = async (req, res) => {
   try {
     const clients = await OAuthClient.find();
@@ -58,7 +103,10 @@ admin.getClientById = async (req, res) => {
     if (!client) {
       return res.status(404).json("Client not found");
     }
-    res.status(200).json(client);
+    res.status(200).json({
+      client_name: client.clientName,
+      redirect_uris: client.redirectUri,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
@@ -67,25 +115,14 @@ admin.getClientById = async (req, res) => {
 
 admin.updateClient = async (req, res) => {
   try {
-    const { clientId, client_Secret, newClientName, newRedirectUri } = req.body;
-    const client = await OAuthClient.findOne({ clientId: clientId });
+    const { client_id, client_name, redirect_uris } = req.body;
+    const client = await OAuthClient.findOne({ clientId: client_id });
     if (!client) {
       return res.status(404).json("Client not found");
     }
-    const checkSecret = await bcrypt.compare(
-      client_Secret,
-      client.clientSecretHash
-    );
-    if (!checkSecret) {
-      return res.status(400).json("Invalid Credentials");
-    }
-    if (newClientName && newRedirectUri) {
-      client.clientName = newClientName;
-      client.redirectUri = newRedirectUri;
-    } else if (newClientName) {
-      client.clientName = newClientName;
-    } else if (newRedirectUri) {
-      client.redirectUri = newRedirectUri;
+    if (client_name && redirect_uris) {
+      client.clientName = client_name;
+      client.redirectUri = redirect_uris;
     }
     await client.save();
     res.status(200).json(client);
@@ -97,17 +134,10 @@ admin.updateClient = async (req, res) => {
 
 admin.deleteClient = async (req, res) => {
   try {
-    const { clientId, client_Secret } = req.body;
-    const client = await OAuthClient.findOne({ clientId: clientId });
+    const { client_id } = req.params;
+    const client = await OAuthClient.findOne({ clientId: client_id });
     if (!client) {
       return res.status(404).json("Client not found");
-    }
-    const checkSecret = await bcrypt.compare(
-      client_Secret,
-      client.clientSecretHash
-    );
-    if (!checkSecret) {
-      return res.status(400).json("Invalid Credentials");
     }
     await client.deleteOne();
     res.status(200).json("Client deleted successfully");
