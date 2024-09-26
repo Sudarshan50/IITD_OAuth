@@ -168,4 +168,3 @@ const ClientRegistrationForm = () => {
 };
 
 export default ClientRegistrationForm;
-

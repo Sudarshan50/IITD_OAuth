@@ -9,7 +9,7 @@ import oAuthRouter from "./routes/oAuth.js";
 import session from "express-session";
 import methodOverride from "method-override";
 import passport from "./config/passport.js";
-import {connectToRedis} from "./lib/redis.js";
+import { connectToRedis } from "./lib/redis.js";
 const app = express();
 const port = process.env.PORT || 3000;
 dotenv.config();
@@ -23,7 +23,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
-  })
+  }),
 );
 //passport middleware
 app.use(passport.initialize());
@@ -32,7 +32,7 @@ app.use(
   cors({
     origin: "*",
     credentials: true,
-  })
+  }),
 );
 
 //importing routes

@@ -24,7 +24,7 @@ auth.verify = async (req, res) => {
     }
     res.cookie("client_id", client_id).cookie("redirect_uri", redirect_uri);
     res.redirect(
-      `http://localhost:5173/signin?client_name=${check.clientName}&client_id=${client_id}&redirect_uri=${redirect_uri}`
+      `http://localhost:5173/signin?client_name=${check.clientName}&client_id=${client_id}&redirect_uri=${redirect_uri}`,
     );
   } catch (error) {
     console.log(error);
@@ -51,7 +51,7 @@ auth.authorize = async (req, res) => {
     const auth_code = await generateAuthorizationCode(client_id, req.user.id);
     await logUserAction(req.user.id, client_id, "Login Initiated");
     res.redirect(
-      `${redirect_uri}/callback?grant_type=auth_code&code=${auth_code}&state=${state}`
+      `${redirect_uri}/callback?grant_type=auth_code&code=${auth_code}&state=${state}`,
     );
   } catch (error) {
     await logUserAction(req.user.id, req.cookies.client_id, error.message);
@@ -66,7 +66,7 @@ auth.client_auth_verify = async (req, res) => {
     const client = await oauth_client.findOne({ clientId: client_id });
     const checkSecret = await bcrpyt.compare(
       client_secret,
-      client.clientSecretHash
+      client.clientSecretHash,
     );
     const checkState = await validateStateParameter(state);
     if (!client || !checkSecret || !checkState) {

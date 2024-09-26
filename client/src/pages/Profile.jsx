@@ -17,27 +17,32 @@ const Profile = () => {
                 console.log(err);
             });
     }, []);
-    const handleLogout = async() => {
-        try{
+    const handleLogout = async () => {
+        try {
             const res = await axios.get("http://localhost:3000/api/oauth/logout");
             if (res.status === 200) {
                 Cookie.remove("access_token");
                 Cookie.remove("refresh_token");
                 window.location.href = "/login";
             }
-        }catch(err)
-        {
+        } catch (err) {
             console.log(err);
         }
-    }
+    };
 
     return (
         <>
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Button className="w-22 h-15 mr-44 ml-23 my-2 justify-center" onClick={handleLogout}> Log Out</Button>
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3"> 
-                    <h1 className="text-2xl font-bold text-center  my-3 underline">Profile Info</h1>
+                    <Button
+                        className="w-22 h-15 ml-23 my-2 mr-44 justify-center"
+                        onClick={handleLogout}
+                    >
+                        {" "}
+                        Log Out
+                    </Button>
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                        <h1 className="my-3 text-center text-2xl font-bold underline">Profile Info</h1>
                         <div className="rounded-lg bg-white p-8 shadow-lg">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center">
@@ -55,4 +60,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

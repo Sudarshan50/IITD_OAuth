@@ -23,7 +23,7 @@ export async function generateAuthorizationCode(clientId, userId) {
     `auth_code:${code}`,
     JSON.stringify(authCodeData),
     "EX",
-    1200
+    1200,
   );
   return code;
 }

@@ -7,7 +7,7 @@ import AdminSignIn from "./pages/admin/SignIn";
 import EditClientForm from "./pages/admin/updateClient";
 import Dashboard from "./pages/admin/dashboard";
 
-function App() {   
+function App() {
     return (
         <>
             <BrowserRouter>
@@ -36,7 +36,10 @@ function App() {
                         path="admin/edit_client/:client_id"
                         element={<EditClientForm />}
                     />
-                    <Route path="admin/dashboard" element = {<Dashboard/>}/>
+                    <Route
+                        path="admin/dashboard"
+                        element={<Dashboard />}
+                    />
                 </Routes>
                 <footer className="bg-blue-gray-900 py-4 text-center text-white">
                     <p className="text-sm">
@@ -49,4 +52,3 @@ function App() {
 }
 
 export default App;
-

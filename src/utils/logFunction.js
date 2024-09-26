@@ -1,4 +1,4 @@
-import Log from "../models/log.js"
+import Log from "../models/log.js";
 /*
  * Log user actions (login/logout) to the MongoDB database without storing IP address.
  * @param {string} userId - The ID of the user.

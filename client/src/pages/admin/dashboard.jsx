@@ -5,8 +5,6 @@ import cookie from "js-cookie";
 import api from "../../components/api";
 import { toast } from "react-toastify";
 
-// Simulated client data
-
 const Dashboard = () => {
     const [clients, setClients] = useState([]);
     const navigate = useNavigate();
@@ -128,4 +126,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "keywords": [],
   "author": "",
@@ -27,5 +28,8 @@
     "passport": "^0.7.0",
     "passport-microsoft": "*",
     "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
   }
 }
