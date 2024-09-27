@@ -6,7 +6,7 @@ const LoginPage = () => {
     const query = new URLSearchParams(location.search);
     const client_name = query.get("client_name");
     const handleMicrosoftLogin = () => {
-        window.location.href = "/api/oauth/auth/microsoft";
+        window.location.href = "http://localhost:3000/api/oauth/auth/microsoft";
     };
 
     const handleSubmit = (e) => {

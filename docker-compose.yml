@@ -21,7 +21,7 @@ services:
             context: ./client
             dockerfile: ../.config/frontend/Dockerfile
         ports:
-            - "8000:8000"
+            - "5173:5173"
 
     nginx:
         container_name: nginx

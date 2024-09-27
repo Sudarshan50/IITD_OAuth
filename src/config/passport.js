@@ -1,6 +1,5 @@
 import passport from "passport";
 import { Strategy as MicrosoftStrategy } from "passport-microsoft";
-import user from "../models/user.js";
 import dotenv from "dotenv";
 import User from "../models/user.js";
 
@@ -38,10 +37,9 @@ passport.use(
           console.log(err);
           throw new Error("Error in passport strategy");
         }
-
         return done(null, profile);
       });
-    },
-  ),
+    }
+  )
 );
 export default passport;
