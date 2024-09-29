@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../components/api";
+import Navbar from "./navbar";
 
 // Simulating a function to fetch client data (replace with your API call)
 
@@ -84,85 +85,88 @@ const EditClientForm = () => {
     };
 
     return (
-        <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
-            {/* Form */}
-            <div className="w-full max-w-lg rounded-lg bg-gray-900 p-8 shadow-md">
-                <h2 className="mb-6 text-2xl font-bold text-white">Edit Client Details</h2>
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-6"
-                >
-                    {/* Client Name */}
-                    <div>
-                        <label
-                            className="mb-2 block font-semibold text-white"
-                            htmlFor="clientName"
-                        >
-                            Client Name
-                        </label>
-                        <input
-                            id="clientName"
-                            type="text"
-                            value={clientData.client_name}
-                            onChange={(e) =>
-                                setClientData((prevData) => ({
-                                    ...prevData,
-                                    client_name: e.target.value,
-                                }))
-                            }
-                            required
-                            className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-indigo-200"
-                            placeholder="Enter client name"
-                        />
-                    </div>
+        <>
+            <Navbar />
+            <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
+                {/* Form */}
+                <div className="w-full max-w-lg rounded-lg bg-gray-900 p-8 shadow-md">
+                    <h2 className="mb-6 text-2xl font-bold text-white">Edit Client Details</h2>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-6"
+                    >
+                        {/* Client Name */}
+                        <div>
+                            <label
+                                className="mb-2 block font-semibold text-white"
+                                htmlFor="clientName"
+                            >
+                                Client Name
+                            </label>
+                            <input
+                                id="clientName"
+                                type="text"
+                                value={clientData.client_name}
+                                onChange={(e) =>
+                                    setClientData((prevData) => ({
+                                        ...prevData,
+                                        client_name: e.target.value,
+                                    }))
+                                }
+                                required
+                                className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-indigo-200"
+                                placeholder="Enter client name"
+                            />
+                        </div>
 
-                    {/* Redirect URIs */}
-                    <div>
-                        <label className="mb-2 block font-semibold text-white">Redirect URIs</label>
-                        {clientData?.redirect_uris?.length > 0 &&
-                            clientData?.redirect_uris.map((uri, index) => (
-                                <div
-                                    key={index}
-                                    className="mb-2 flex space-x-2"
-                                >
-                                    <input
-                                        type="text"
-                                        value={uri}
-                                        onChange={(e) => handleRedirectUriChange(index, e.target.value)}
-                                        required
-                                        className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-indigo-200"
-                                        placeholder="Enter redirect URI"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                                        onClick={() => handleRemoveRedirectUri(index)}
+                        {/* Redirect URIs */}
+                        <div>
+                            <label className="mb-2 block font-semibold text-white">Redirect URIs</label>
+                            {clientData?.redirect_uris?.length > 0 &&
+                                clientData?.redirect_uris.map((uri, index) => (
+                                    <div
+                                        key={index}
+                                        className="mb-2 flex space-x-2"
                                     >
-                                        Remove
-                                    </button>
-                                </div>
-                            ))}
-                        <button
-                            type="button"
-                            className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                            onClick={handleAddRedirectUri}
-                        >
-                            Add URI
-                        </button>
-                    </div>
+                                        <input
+                                            type="text"
+                                            value={uri}
+                                            onChange={(e) => handleRedirectUriChange(index, e.target.value)}
+                                            required
+                                            className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-indigo-200"
+                                            placeholder="Enter redirect URI"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                                            onClick={() => handleRemoveRedirectUri(index)}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
+                            <button
+                                type="button"
+                                className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                                onClick={handleAddRedirectUri}
+                            >
+                                Add URI
+                            </button>
+                        </div>
 
-                    {/* Submit Button */}
-                    <div>
-                        <button
-                            type="submit"
-                            className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300"
-                        >
-                            Update Client
-                        </button>
-                    </div>
-                </form>
+                        {/* Submit Button */}
+                        <div>
+                            <button
+                                type="submit"
+                                className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300"
+                            >
+                                Update Client
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

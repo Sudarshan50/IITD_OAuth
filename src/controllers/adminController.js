@@ -168,3 +168,23 @@ admin.getAllUsers = async (req, res) => {
 };
 
 export default admin;
+
+admin.verify = async (req, res) => {
+  try {
+    console.log(res.cookies);
+    return res.status(200).json({ message: "Admin verified" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// admin.logout = async (req, res) => {
+//   try {
+//     res.clearCookie("adminToken");
+//     res.status(200).json({ message: "Admin logged out" });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };

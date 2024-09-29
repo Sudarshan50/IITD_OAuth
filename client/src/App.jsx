@@ -6,6 +6,8 @@ import OnboardingForm from "./components/onboarding";
 import AdminSignIn from "./pages/admin/SignIn";
 import EditClientForm from "./pages/admin/updateClient";
 import Dashboard from "./pages/admin/dashboard";
+import NotFound from "./components/NotFound";
+import UnAuthorised from "./components/UnAuthorised";
 
 function App() {
     return (
@@ -39,6 +41,14 @@ function App() {
                     <Route
                         path="admin/dashboard"
                         element={<Dashboard />}
+                    />
+                    <Route
+                        path="*"
+                        element={<NotFound />}
+                    />
+                    <Route
+                        path="/unauthorised"
+                        element={<UnAuthorised />}
                     />
                 </Routes>
                 <footer className="bg-blue-gray-900 py-4 text-center text-white">

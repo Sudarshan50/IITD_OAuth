@@ -1,9 +1,9 @@
-import { Button } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
+import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import cookie from "js-cookie";
 import api from "../../components/api";
 import { toast } from "react-toastify";
+import Navbar from "./navbar";
 
 const Dashboard = () => {
     const [clients, setClients] = useState([]);
@@ -41,28 +41,7 @@ const Dashboard = () => {
     return (
         <div className="min-h-[calc(94.84vh-1px)] overflow-hidden bg-black">
             {/* Navbar */}
-            <nav className="bg-blue-gray-900 p-4 text-white">
-                <div className="container mx-auto flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-                    <div className="space-x-4">
-                        <Button
-                            className="rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-gray-900 hover:bg-yellow-500"
-                            onClick={() => navigate("/admin/reg")}
-                        >
-                            Register New Client
-                        </Button>
-                        <Button
-                            className="rounded-lg bg-red-400 px-4 py-2 font-semibold text-gray-900 hover:bg-red-500"
-                            onClick={() => {
-                                cookie.remove("adminToken");
-                                navigate("/admin/signin");
-                            }}
-                        >
-                            Log Out
-                        </Button>
-                    </div>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Main Content */}
             <div className="container mx-auto mt-8 p-4">

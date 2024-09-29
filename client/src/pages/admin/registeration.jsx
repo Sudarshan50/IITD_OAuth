@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../../components/api";
 import { toast } from "react-toastify";
+import Navbar from "./navbar";
 
 const ClientRegistrationForm = () => {
     const [clientName, setClientName] = useState("");
@@ -54,6 +55,7 @@ const ClientRegistrationForm = () => {
 
     return (
         <>
+            <Navbar />
             <div className="bg-blackp-4 flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black">
                 {/* Form */}
                 <div className="w-full max-w-lg rounded-lg bg-gray-900 p-8 shadow-md">

@@ -11,7 +11,8 @@ adminRouter.get("/clients", adminMiddleWare, admin.getAllClients);
 adminRouter.get("/client/:client_id", adminMiddleWare, admin.getClientById);
 adminRouter.delete("/client/:client_id", adminMiddleWare, admin.deleteClient);
 adminRouter.put("/client", adminMiddleWare, admin.updateClient);
-adminRouter.get("/users", admin.getAllUsers);
-adminRouter.get("/logs", admin.getAllLogs);
+adminRouter.get("/users", adminMiddleWare, admin.getAllUsers);
+adminRouter.get("/logs", adminMiddleWare, admin.getAllLogs);
+adminRouter.get("/verify", adminMiddleWare, admin.verify);
 
 export default adminRouter;
