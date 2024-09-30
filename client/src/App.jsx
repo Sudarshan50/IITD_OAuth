@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import ClientRegistrationForm from "./pages/admin/registeration";
 import OnboardingForm from "./components/onboarding";
@@ -10,6 +9,7 @@ import NotFound from "./components/NotFound";
 import UnAuthorised from "./components/UnAuthorised";
 import SuperAdminLogs from "./pages/superadmin/logs";
 import ProtectedRoute from "./components/RouteProtection";
+import OauthInfo from "./pages/OauthInfo";
 
 function App() {
     return (
@@ -19,7 +19,7 @@ function App() {
                     {/* Public Routes */}
                     <Route
                         path="/"
-                        element={<Profile />}
+                        element={<OauthInfo />}
                     />
                     <Route
                         path="/signin"
@@ -36,13 +36,7 @@ function App() {
                     />
 
                     {/* Admin Routes */}
-                    <Route
-                        element={
-                            <ProtectedRoute
-                                adminOnly={true}
-                            />
-                        }
-                    >
+                    <Route element={<ProtectedRoute adminOnly={true} />}>
                         <Route
                             path="admin"
                             element={<Outlet />}

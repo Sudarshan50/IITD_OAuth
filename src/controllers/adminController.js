@@ -42,7 +42,7 @@ admin.register = async (req, res) => {
     logAdminAction(
       req.admin,
       "Client created successfully",
-      `Client ID: ${client_id}`
+      `Client ID: ${client_id}`,
     );
     res.status(201).json({
       client_id,
@@ -169,7 +169,7 @@ admin.updateClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client updated successfully",
-        `Client ID: ${client_id}`
+        `Client ID: ${client_id}`,
       );
       return res.status(200).json(client);
     } else if (permission_code === "admin") {
@@ -188,7 +188,7 @@ admin.updateClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client updated successfully",
-        `Client ID: ${client_id}`
+        `Client ID: ${client_id}`,
       );
       res.status(200).json(client);
     }
@@ -212,7 +212,7 @@ admin.deleteClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client deleted successfully",
-        `Client ID: ${client_id}`
+        `Client ID: ${client_id}`,
       );
       return res.status(200).json("Client deleted successfully");
     } else if (permission_code === "admin") {
@@ -227,7 +227,7 @@ admin.deleteClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client deleted successfully",
-        `Client ID: ${client_id}`
+        `Client ID: ${client_id}`,
       );
       return res.status(200).json("Client deleted successfully");
     }
@@ -292,7 +292,9 @@ admin.getAllAdminLogs = async (req, res) => {
     if (req.permission_code !== "superadmin") {
       return res.status(401).json("Unauthorized");
     }
-    const logs = await AdminLogs.find().populate("adminId").sort({ createdAt: -1 });
+    const logs = await AdminLogs.find()
+      .populate("adminId")
+      .sort({ createdAt: -1 });
     res.status(200).json({
       logs: logs.map((log) => {
         return {

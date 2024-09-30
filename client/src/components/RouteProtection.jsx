@@ -31,23 +31,23 @@ const ProtectedRoute = ({ adminOnly = false, superAdminOnly = false }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-            const authStatus = await isAuthenticated();
-            if (authStatus.isAuthenticated) {
-                if (superAdminOnly) {
-                setAuthorized(authStatus.isSuperAdmin);
-                } else if (adminOnly) {
-                setAuthorized(authStatus.isAdmin || authStatus.isSuperAdmin);
+                const authStatus = await isAuthenticated();
+                if (authStatus.isAuthenticated) {
+                    if (superAdminOnly) {
+                        setAuthorized(authStatus.isSuperAdmin);
+                    } else if (adminOnly) {
+                        setAuthorized(authStatus.isAdmin || authStatus.isSuperAdmin);
+                    } else {
+                        setAuthorized(true);
+                    }
                 } else {
-                setAuthorized(true);
+                    setAuthorized(false);
                 }
-            } else {
-                setAuthorized(false);
-            }
             } catch (error) {
-            setAuthorized(false);
-            console.error(error);
+                setAuthorized(false);
+                console.error(error);
             } finally {
-            setLoading(false);
+                setLoading(false);
             }
         };
 
@@ -68,4 +68,3 @@ const ProtectedRoute = ({ adminOnly = false, superAdminOnly = false }) => {
 };
 
 export default ProtectedRoute;
-

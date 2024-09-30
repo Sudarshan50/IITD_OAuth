@@ -1,6 +1,8 @@
 import { Button } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
+    const navigate = useNavigate();
     return (
         <div className="flex min-h-[calc(94.84vh-1px)] flex-col items-center justify-center bg-gray-100">
             <h1 className="mb-4 text-4xl font-bold text-red-600">404 - Not Found</h1>
@@ -8,7 +10,8 @@ const NotFound = () => {
             <Button
                 color="red"
                 className="animate-pulse"
-                onClick={() => window.history.back()}
+                ripple="light"
+                onClick={() => navigate("/")}
             >
                 Go Back
             </Button>
@@ -17,4 +20,3 @@ const NotFound = () => {
 };
 
 export default NotFound;
-

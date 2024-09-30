@@ -3,7 +3,7 @@ import AdminLogs from "../models/admin_logs.js";
 export const logAdminAction = async (
   adminId,
   action,
-  message = "No message provided"
+  message = "No message provided",
 ) => {
   try {
     const log = new AdminLogs({
