@@ -62,7 +62,6 @@ const Dashboard = () => {
                                     <tr className="bg-gray-400 uppercase">
                                         <th className="px-4 py-3">Client ID</th>
                                         <th className="px-4 py-3">Client Name</th>
-                                        <th className="px-4 py-3">Current Users</th>
                                         <th className="px-4 py-3">Actions</th>
                                     </tr>
                                 </thead>
@@ -75,9 +74,6 @@ const Dashboard = () => {
                                             >
                                                 <td className="px-4 py-3">{client.clientId}</td>
                                                 <td className="px-4 py-3">{client.clientName}</td>
-                                                <td className="px-4 py-3">
-                                                    {client?.current_users ? client?.current_users : 0}
-                                                </td>
                                                 <td className="space-x-4 px-4 py-3">
                                                     <Button
                                                         className="rounded-lg bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"

@@ -13,7 +13,7 @@ const NotFound = () => {
                 ripple="light"
                 onClick={() => navigate("/")}
             >
-                Go Back
+                Go Home
             </Button>
         </div>
     );
