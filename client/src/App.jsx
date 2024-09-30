@@ -53,6 +53,10 @@ function App() {
                                 path="dashboard"
                                 element={<Dashboard />}
                             />
+                            <Route
+                                path="*"
+                                element={<NotFound />}
+                            />
                         </Route>
                     </Route>
 
@@ -71,6 +75,10 @@ function App() {
                             <Route
                                 path="logs"
                                 element={<SuperAdminLogs />}
+                            />
+                            <Route
+                                path="*"
+                                element={<NotFound />}
                             />
                         </Route>
                     </Route>
