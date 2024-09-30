@@ -15,5 +15,6 @@ adminRouter.get("/users", adminMiddleWare, admin.getAllUsers);
 adminRouter.get("/logs", adminMiddleWare, admin.getAllLogs);
 adminRouter.get("/verify", adminMiddleWare, admin.verify);
 adminRouter.get("/logout", adminMiddleWare, admin.logout);
+adminRouter.get('/adminLogs',adminMiddleWare,admin.getAllAdminLogs)
 
 export default adminRouter;

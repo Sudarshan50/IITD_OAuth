@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import ClientRegistrationForm from "./pages/admin/registeration";
@@ -8,16 +8,19 @@ import EditClientForm from "./pages/admin/updateClient";
 import Dashboard from "./pages/admin/dashboard";
 import NotFound from "./components/NotFound";
 import UnAuthorised from "./components/UnAuthorised";
+import SuperAdminLogs from "./pages/superadmin/logs";
+import ProtectedRoute from "./components/RouteProtection";
 
 function App() {
     return (
         <>
             <BrowserRouter>
                 <Routes>
+                    {/* Public Routes */}
                     <Route
                         path="/"
                         element={<Profile />}
-                    ></Route>
+                    />
                     <Route
                         path="/signin"
                         element={<SignIn />}
@@ -26,22 +29,59 @@ function App() {
                         path="/onboarding"
                         element={<OnboardingForm />}
                     />
+
                     <Route
-                        path="/admin/reg"
-                        element={<ClientRegistrationForm />}
-                    />
-                    <Route
-                        path="admin/signin"
+                        path="/admin/signin"
                         element={<AdminSignIn />}
                     />
+
+                    {/* Admin Routes */}
                     <Route
-                        path="admin/edit_client/:client_id"
-                        element={<EditClientForm />}
-                    />
+                        element={
+                            <ProtectedRoute
+                                adminOnly={true}
+                            />
+                        }
+                    >
+                        <Route
+                            path="admin"
+                            element={<Outlet />}
+                        >
+                            <Route
+                                path="reg"
+                                element={<ClientRegistrationForm />}
+                            />
+                            <Route
+                                path="edit_client/:client_id"
+                                element={<EditClientForm />}
+                            />
+                            <Route
+                                path="dashboard"
+                                element={<Dashboard />}
+                            />
+                        </Route>
+                    </Route>
+
                     <Route
-                        path="admin/dashboard"
-                        element={<Dashboard />}
-                    />
+                        element={
+                            <ProtectedRoute
+                                adminOnly={false}
+                                superAdminOnly={true}
+                            />
+                        }
+                    >
+                        <Route
+                            path="superadmin"
+                            element={<Outlet />}
+                        >
+                            <Route
+                                path="logs"
+                                element={<SuperAdminLogs />}
+                            />
+                        </Route>
+                    </Route>
+
+                    {/* Fallback Routes */}
                     <Route
                         path="*"
                         element={<NotFound />}

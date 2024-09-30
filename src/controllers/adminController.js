@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import Admin from "../models/admin.js";
 import jwt from "jsonwebtoken";
+import { logAdminAction } from "../utils/superAdminLogger.js";
+import AdminLogs from "../models/admin_logs.js";
 
 let admin = {};
 
@@ -37,6 +39,11 @@ admin.register = async (req, res) => {
     await client.save();
     currAdmin.ownedClients.push(client_id);
     await currAdmin.save();
+    logAdminAction(
+      req.admin,
+      "Client created successfully",
+      `Client ID: ${client_id}`
+    );
     res.status(201).json({
       client_id,
       client_name,
@@ -44,7 +51,7 @@ admin.register = async (req, res) => {
       redirect_uris,
     });
   } catch (error) {
-    console.log(error);
+    logAdminAction(req.admin, "Client creation failed", error.message);
     res.status(500).json(error.message);
   }
 };
@@ -159,6 +166,11 @@ admin.updateClient = async (req, res) => {
         client.redirectUri = redirect_uris;
       }
       await client.save();
+      logAdminAction(
+        req.admin,
+        "Client updated successfully",
+        `Client ID: ${client_id}`
+      );
       return res.status(200).json(client);
     } else if (permission_code === "admin") {
       const client = await OAuthClient.findOne({
@@ -173,10 +185,16 @@ admin.updateClient = async (req, res) => {
         client.redirectUri = redirect_uris;
       }
       await client.save();
+      logAdminAction(
+        req.admin,
+        "Client updated successfully",
+        `Client ID: ${client_id}`
+      );
       res.status(200).json(client);
     }
   } catch (error) {
     console.log(error);
+    logAdminAction(req.admin, "Client update failed", error.message);
     res.status(500).json("Internal Server Error");
   }
 };
@@ -191,6 +209,11 @@ admin.deleteClient = async (req, res) => {
         return res.status(404).json("Client not found");
       }
       await client.deleteOne();
+      logAdminAction(
+        req.admin,
+        "Client deleted successfully",
+        `Client ID: ${client_id}`
+      );
       return res.status(200).json("Client deleted successfully");
     } else if (permission_code === "admin") {
       const client = await OAuthClient.findOne({
@@ -201,10 +224,16 @@ admin.deleteClient = async (req, res) => {
         return res.status(404).json("Client not found");
       }
       await client.deleteOne();
+      logAdminAction(
+        req.admin,
+        "Client deleted successfully",
+        `Client ID: ${client_id}`
+      );
       return res.status(200).json("Client deleted successfully");
     }
   } catch (error) {
     console.log(error);
+    logAdminAction(req.admin, "Client deletion failed", error.message);
     res.status(500).json("Internal Server Error");
   }
 };
@@ -239,8 +268,9 @@ export default admin;
 
 admin.verify = async (req, res) => {
   try {
-    console.log(res.cookies);
-    return res.status(200).json({ message: "Admin verified" });
+    return res
+      .status(200)
+      .json({ message: "Admin verified", data: req.permission_code });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
@@ -254,5 +284,27 @@ admin.logout = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+admin.getAllAdminLogs = async (req, res) => {
+  try {
+    if (req.permission_code !== "superadmin") {
+      return res.status(401).json("Unauthorized");
+    }
+    const logs = await AdminLogs.find().populate("adminId").sort({ createdAt: -1 });
+    res.status(200).json({
+      logs: logs.map((log) => {
+        return {
+          adminId: log.adminId.userName,
+          action: log.action,
+          message: log.message,
+          createdAt: log.createdAt,
+        };
+      }),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Internal Server Error");
   }
 };
