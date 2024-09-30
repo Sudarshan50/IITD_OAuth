@@ -86,9 +86,7 @@ function App() {
                     />
                 </Routes>
                 <footer className="bg-blue-gray-900 py-4 text-center text-white">
-                    <p className="text-sm">
-                        Powered by <span className="font-bold">DevClub</span>
-                    </p>
+                    <p className="text-sm">&copy; {new Date().getFullYear()} DevClub. All rights reserved.</p>
                 </footer>
             </BrowserRouter>
         </>

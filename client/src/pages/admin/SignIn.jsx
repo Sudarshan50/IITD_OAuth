@@ -57,7 +57,7 @@ const AdminSignIn = () => {
                             onChange={(e) => setuserName(e.target.value)}
                             required
                             className="w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring focus:ring-indigo-200"
-                            placeholder="Enter your userName"
+                            placeholder="Enter your user name"
                         />
                     </div>
 
