@@ -9,6 +9,7 @@ const oauthClientSchema = new mongoose.Schema({
   grants: { type: [String], default: ["authorization_code"], required: true },
   scope: { type: [String], default: ["read"], required: false },
   createdAt: { type: Date, default: Date.now },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true },
 });
 
 oauthClientSchema.pre("save", async function (next) {

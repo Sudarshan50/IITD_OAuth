@@ -1,6 +1,8 @@
 import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
+import axios from "axios";
+import { toast } from "react-toastify";
 const Navbar = () => {
     const navigate = useNavigate();
     const { pathname } = window.location;
@@ -29,8 +31,27 @@ const Navbar = () => {
                     <Button
                         className="rounded-lg bg-red-400 px-4 py-2 font-semibold text-gray-900 hover:bg-red-500"
                         onClick={() => {
-                            cookie.remove("adminToken");
-                            navigate("/admin/signin");
+                            toast
+                                .promise(
+                                    axios.get("/admin/logout"),
+                                    {
+                                        pending: "Logging out...",
+                                        success: "Logged out successfully!",
+                                        error: "Logout failed!",
+                                    },
+                                    {
+                                        autoClose: 1000,
+                                    }
+                                )
+                                .then((res) => {
+                                    if (res.status === 200) {
+                                        cookie.remove("admin_token");
+                                        navigate("/admin/signin");
+                                    }
+                                })
+                                .catch((err) => {
+                                    throw new Error(err);
+                                });
                         }}
                     >
                         Log Out

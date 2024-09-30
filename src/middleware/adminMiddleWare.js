@@ -6,7 +6,8 @@ export const adminMiddleWare = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const decoded = jwt.verify(token, process.env.ADMIN_KEY);
-    req.admin = decoded;
+    req.admin = decoded.id;
+    req.permission_code = decoded.permission_code;
     next();
   } catch (err) {
     console.log(err);

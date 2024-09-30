@@ -17,6 +17,10 @@ const base64UrlEncode = (hexString) =>
 
 admin.register = async (req, res) => {
   try {
+    const currAdmin = await Admin.findById(req.admin);
+    if (!currAdmin) {
+      return res.status(401).json("Unauthorized");
+    }
     const { client_name } = req.body;
     const redirect_uris = req.body.redirect_uris;
     const client_id_generate = crypto.randomBytes(20).toString("hex");
@@ -28,8 +32,11 @@ admin.register = async (req, res) => {
       clientName: client_name,
       clientSecretHash: client_secret,
       redirectUri: redirect_uris,
+      owner: req.admin,
     });
     await client.save();
+    currAdmin.ownedClients.push(client_id);
+    await currAdmin.save();
     res.status(201).json({
       client_id,
       client_name,
@@ -38,7 +45,7 @@ admin.register = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json(error.message);
   }
 };
 
@@ -53,10 +60,14 @@ admin.signIn = async (req, res) => {
     if (!checkPassword) {
       return res.status(400).json("Invalid Credentials");
     }
-    const token = jwt.sign({ id: findAdmin._id }, process.env.ADMIN_KEY, {
+    const payload = {
+      id: findAdmin._id,
+      permission_code: findAdmin.permission_code,
+    };
+    const token = jwt.sign(payload, process.env.ADMIN_KEY, {
       expiresIn: "1h",
     });
-    res.cookie("token", token, {
+    res.cookie("admin_token", token, {
       maxAge: 3600000,
       sameSite: "none",
     });
@@ -87,8 +98,14 @@ admin.signUp = async (req, res) => {
 };
 admin.getAllClients = async (req, res) => {
   try {
-    const clients = await OAuthClient.find();
-    res.status(200).json(clients);
+    const permission_code = req.permission_code;
+    if (permission_code === "superadmin") {
+      const clients = await OAuthClient.find();
+      return res.status(200).json(clients);
+    } else if (permission_code === "admin") {
+      const clients = await OAuthClient.find({ owner: req.admin });
+      return res.status(200).json(clients);
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
@@ -97,16 +114,31 @@ admin.getAllClients = async (req, res) => {
 
 admin.getClientById = async (req, res) => {
   try {
-    const client = await OAuthClient.findOne({
-      clientId: req.params.client_id,
-    });
-    if (!client) {
-      return res.status(404).json("Client not found");
+    const permission_code = req.permission_code;
+    if (permission_code === "superadmin") {
+      const client = await OAuthClient.findOne({
+        clientId: req.params.client_id,
+      });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      return res.status(200).json({
+        client_name: client.clientName,
+        redirect_uris: client.redirectUri,
+      });
+    } else if (permission_code === "admin") {
+      const client = await OAuthClient.findOne({
+        clientId: req.params.client_id,
+        owner: req.admin,
+      });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      res.status(200).json({
+        client_name: client.clientName,
+        redirect_uris: client.redirectUri,
+      });
     }
-    res.status(200).json({
-      client_name: client.clientName,
-      redirect_uris: client.redirectUri,
-    });
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
@@ -116,16 +148,33 @@ admin.getClientById = async (req, res) => {
 admin.updateClient = async (req, res) => {
   try {
     const { client_id, client_name, redirect_uris } = req.body;
-    const client = await OAuthClient.findOne({ clientId: client_id });
-    if (!client) {
-      return res.status(404).json("Client not found");
+    const permission_code = req.permission_code;
+    if (permission_code === "superadmin") {
+      const client = await OAuthClient.findOne({ clientId: client_id });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      if (client_name && redirect_uris) {
+        client.clientName = client_name;
+        client.redirectUri = redirect_uris;
+      }
+      await client.save();
+      return res.status(200).json(client);
+    } else if (permission_code === "admin") {
+      const client = await OAuthClient.findOne({
+        clientId: client_id,
+        owner: req.admin,
+      });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      if (client_name && redirect_uris) {
+        client.clientName = client_name;
+        client.redirectUri = redirect_uris;
+      }
+      await client.save();
+      res.status(200).json(client);
     }
-    if (client_name && redirect_uris) {
-      client.clientName = client_name;
-      client.redirectUri = redirect_uris;
-    }
-    await client.save();
-    res.status(200).json(client);
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
@@ -135,12 +184,25 @@ admin.updateClient = async (req, res) => {
 admin.deleteClient = async (req, res) => {
   try {
     const { client_id } = req.params;
-    const client = await OAuthClient.findOne({ clientId: client_id });
-    if (!client) {
-      return res.status(404).json("Client not found");
+    const permission_code = req.permission_code;
+    if (permission_code === "superadmin") {
+      const client = await OAuthClient.findOne({ clientId: client_id });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      await client.deleteOne();
+      return res.status(200).json("Client deleted successfully");
+    } else if (permission_code === "admin") {
+      const client = await OAuthClient.findOne({
+        clientId: client_id,
+        owner: req.admin,
+      });
+      if (!client) {
+        return res.status(404).json("Client not found");
+      }
+      await client.deleteOne();
+      return res.status(200).json("Client deleted successfully");
     }
-    await client.deleteOne();
-    res.status(200).json("Client deleted successfully");
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal Server Error");
@@ -149,6 +211,9 @@ admin.deleteClient = async (req, res) => {
 
 admin.getAllLogs = async (req, res) => {
   try {
+    if (req.permission_code !== "superadmin") {
+      return res.status(401).json("Unauthorized");
+    }
     const logs = await log.find();
     res.status(200).json(logs);
   } catch (error) {
@@ -159,6 +224,9 @@ admin.getAllLogs = async (req, res) => {
 
 admin.getAllUsers = async (req, res) => {
   try {
+    if (req.permission_code !== "superadmin") {
+      return res.status(401).json("Unauthorized");
+    }
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
@@ -178,13 +246,13 @@ admin.verify = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-// admin.logout = async (req, res) => {
-//   try {
-//     res.clearCookie("adminToken");
-//     res.status(200).json({ message: "Admin logged out" });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
+admin.logout = async (req, res) => {
+  try {
+    res.cookie("admin_token", "", { maxAge: 0, sameSite: "none" });
+    res.clearCookie("admin_token");
+    res.status(200).json({ message: "Admin logged out" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
