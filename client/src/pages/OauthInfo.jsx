@@ -84,17 +84,19 @@ const OauthInfo = () => {
             className={`${darkMode ? "bg-[#121212] text-gray-300" : "bg-gray-50 text-gray-800"} min-h-screen font-sans transition-all`} // Set a nice font family
         >
             {/* Enhanced Navbar */}
-            <nav className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 p-4 shadow-lg">
+            <nav className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 px-1 py-2 shadow-lg sm:p-4">
                 <div className="container mx-auto flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-white">OAuth Documentation</h1>
-                    <div className="flex items-center space-x-4">
+                    <h1 className="pl-3 text-sm font-bold text-white sm:pl-0 sm:text-2xl md:text-3xl">
+                        OAuth Documentation
+                    </h1>
+                    <div className="flex items-center space-x-2 sm:space-x-4">
                         <Tooltip
                             content={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                             placement="bottom"
                         >
                             <IconButton
                                 onClick={handleToggle}
-                                className="bg-white text-gray-900 transition-all hover:bg-gray-100"
+                                className="h-9 bg-white text-gray-900 transition-all hover:bg-gray-100"
                             >
                                 {darkMode ? (
                                     <SunIcon className="h-5 w-5 text-yellow-400" />
@@ -116,20 +118,22 @@ const OauthInfo = () => {
             </nav>
 
             {/* Main Content */}
-            <div className="container mx-auto p-6">
-                <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
+            <div className="container mx-auto p-3 lg:p-6">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6">
                     {/* Why this OAuth Section */}
                     <div
-                        className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} rounded-lg p-6 shadow-lg transition-all`}
+                        className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} rounded-lg p-4 shadow-lg transition-all lg:p-6`}
                     >
-                        <h2 className={`mb-4 text-2xl font-semibold ${headingColor}`}>Why Choose This OAuth System?</h2>
-                        <p className="mb-4 leading-relaxed">
+                        <h2 className={`mb-4 text-base font-bold md:text-2xl md:font-semibold ${headingColor}`}>
+                            Why Choose This OAuth System?
+                        </h2>
+                        <p className="mb-4 text-sm leading-relaxed md:text-base">
                             The IITD OAuth initiative took significant time to receive approval from the CSC, and it
                             comes with certain limitations. This OAuth system streamlines the authentication process,
                             placing the security burden on a robust framework while allowing you to concentrate on
                             developing your application seamlessly.
                         </p>
-                        <p className="mb-4 leading-relaxed">
+                        <p className="mb-4 text-sm md:text-base leading-relaxed">
                             With this OAuth solution, user authentication becomes straightforward, enhancing both
                             scalability and security. Rely on it for an efficient and easy-to-implement solution that
                             elevates your application&apos;s user experience.
@@ -138,16 +142,18 @@ const OauthInfo = () => {
 
                     {/* How to Use Section */}
                     <div
-                        className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} rounded-lg p-6 shadow-lg transition-all`}
+                        className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} rounded-lg p-4 shadow-lg transition-all lg:p-6`}
                     >
-                        <h2 className={`mb-4 text-2xl font-semibold ${headingColor}`}>How to Get Started</h2>
-                        <p className="mb-4 leading-relaxed">
+                        <h2 className={`mb-4 text-base font-bold md:text-2xl md:font-semibold ${headingColor}`}>
+                            How to Get Started
+                        </h2>
+                        <p className="mb-4 text-sm leading-relaxed md:text-base">
                             After logging in, this OAuth returns user data directly. If a user signs in for the first
                             time, be sure to store their information in your database and implement your token logic
                             appropriately. Upon successful registration, you will receive a <strong>client_id </strong>
                             and <strong>client_secret</strong>.
                         </p>
-                        <p className="mb-4 leading-relaxed">
+                        <p className="mb-4 text-sm md:text-base leading-relaxed">
                             To register your client, follow the provided link to obtain your credentials. The login
                             request should look like this:
                             <code
@@ -157,7 +163,7 @@ const OauthInfo = () => {
                             </code>
                         </p>
                         <p
-                            className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} leading-relaxed`}
+                            className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} leading-relaxed text-sm md:text-base`}
                         >
                             Handle the callback request effectively and manage the token flow as demonstrated in the
                             example code below.
@@ -165,9 +171,9 @@ const OauthInfo = () => {
                     </div>
 
                     {/* Code Block with Syntax Highlighting and Copy Button */}
-                    <div className="col-span-2 rounded-lg bg-[#1f1f1f] p-6 shadow-lg transition-all">
-                        <h2 className={`mb-4 text-2xl font-semibold text-white`}>Example Code Implementation</h2>
-                        <div className="relative rounded-lg bg-gray-900 p-4 text-white">
+                    <div className="col-span-1 rounded-lg bg-[#1f1f1f] px-2 py-3 md:p-6 shadow-lg transition-all md:col-span-2">
+                        <h2 className={`mb-4 text-xl md:text-2xl font-semibold text-white`}>Example Code Implementation</h2>
+                        <div className="relative rounded-lg bg-gray-900 p-2 md:p-4 text-white">
                             <pre className="language-javascript">
                                 <code>{codeSnippet}</code>
                             </pre>

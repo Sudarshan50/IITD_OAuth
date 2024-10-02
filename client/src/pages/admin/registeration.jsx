@@ -56,10 +56,10 @@ const ClientRegistrationForm = () => {
     return (
         <>
             <Navbar />
-            <div className="bg-blackp-4 flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black">
+            <div className="p-2 sm:p-4 flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black">
                 {/* Form */}
-                <div className="w-full max-w-lg rounded-lg bg-gray-900 p-8 shadow-md">
-                    <h2 className="mb-6 text-2xl font-bold text-white">Add New Client</h2>
+                <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 sm:p-8 shadow-md">
+                    <h2 className="mb-6 text-xl sm:text-2xl font-bold text-white">Add New Client</h2>
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-6"

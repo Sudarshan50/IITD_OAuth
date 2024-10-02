@@ -89,8 +89,8 @@ const EditClientForm = () => {
             <Navbar />
             <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
                 {/* Form */}
-                <div className="w-full max-w-lg rounded-lg bg-gray-900 p-8 shadow-md">
-                    <h2 className="mb-6 text-2xl font-bold text-white">Edit Client Details</h2>
+                <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 sm:p-8 shadow-md">
+                    <h2 className="mb-6 text-xl sm:text-2xl font-bold text-white">Edit Client Details</h2>
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-6"
