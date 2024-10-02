@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: { type: Date },
   instagramId: { type: String },
   mobileNo: { type: String },
-  onboarding: { type: Boolean, default: false },
+  completedOnboarding: { type: Boolean, default: false },
   authorizedClients: {
     type: Array,
     ref: oauth_client,

@@ -1,33 +1,74 @@
 import { useLocation } from "react-router-dom";
 import logo from "../pages/devclub_logo.png";
+import { useEffect, useState } from "react";
+import api from "../components/api";
+import { Spinner } from "@material-tailwind/react";
+import { MSLoginButton } from "../components/MSLoginButton";
 
 const LoginPage = () => {
+    const [clientName, setClientName] = useState("");
+    const [verifyError, setVerifyError] = useState("");
+    const [loading, setLoading] = useState(false);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const client_name = query.get("client_name");
-    const handleMicrosoftLogin = () => {
-        window.location.href = "http://localhost:3000/api/oauth/auth/microsoft";
+    const client_id = query.get("client_id");
+    const redirect_uri = query.get("redirect_uri");
+
+    const fetchClientInfo = async () => {
+        setLoading(true);
+        await api
+            .post(`/oauth/verify`, { client_id, redirect_uri })
+            .then((res) => {
+                if (res.status === 200) {
+                    setClientName(res.data.message);
+                }
+            })
+            .catch((err) => {
+                setVerifyError(err.response?.data || "Error verifying client");
+            })
+            .finally(() => setLoading(false));
     };
+
+    useEffect(() => {
+        fetchClientInfo();
+    },[]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Yahan se Kuch Ni Hota..");
     };
 
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                <div className="flex items-center justify-center rounded-xl bg-white p-8 shadow-2xl">
+                    <Spinner className="h-12 w-12" />
+                </div>
+            </div>
+        );
+    }
+
+    if (verifyError) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl">
+                    <h2 className="mb-4 text-center text-2xl font-semibold text-gray-800">{verifyError}</h2>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex min-h-screen flex-col justify-between bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
             {/* Login Section */}
-            <div className="flex flex-grow items-center justify-center">
-                <div className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
+            <div className="flex flex-grow items-center justify-center px-4 py-8">
+                <div className="flex flex-col md:flex-row w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
                     {/* Left side: Login Form */}
-                    <div className="w-1/2 p-8">
-                        <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {client_name}</h2>
+                    <div className="md:w-1/2 w-full p-8">
+                        <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {clientName}</h2>
 
                         {/* Login Form */}
-                        <form
-                            onSubmit={handleSubmit}
-                            className="space-y-6"
-                        >
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -63,24 +104,16 @@ const LoginPage = () => {
 
                         {/* Microsoft Login Button */}
                         <div className="mt-6">
-                            <button
-                                onClick={handleMicrosoftLogin}
-                                className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
-                            >
-                                <img
-                                    src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-                                    alt="Microsoft Logo"
-                                    className="mr-2 h-5 w-5"
-                                />
-                                Login with Microsoft
-                            </button>
+                            <MSLoginButton client_id={client_id} redirect_uri={redirect_uri} />
                         </div>
                     </div>
-                    <div className="flex w-1/2 items-center justify-center">
+
+                    {/* Right side: Image */}
+                    <div className="flex md:w-1/2 w-full items-center justify-center p-4 md:p-0">
                         <img
                             src={logo}
                             alt="DevClub Logo"
-                            className="h-full object-contain"
+                            className="h-32 md:h-full object-contain"
                         />
                     </div>
                 </div>

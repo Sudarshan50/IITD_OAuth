@@ -32,12 +32,13 @@ passport.use(
               kerberosId: profile.emails[0].value.split("@")[0],
             });
             await newUser.save();
+            return done(null, newUser);
           }
+          return done(null, user);
         } catch (err) {
           console.log(err);
           throw new Error("Error in passport strategy");
         }
-        return done(null, profile);
       });
     },
   ),

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/SignIn";
 import ClientRegistrationForm from "./pages/admin/registeration";
 import OnboardingForm from "./components/onboarding";
@@ -36,11 +36,7 @@ function App() {
                     />
 
                     {/* Admin Routes */}
-                    <Route element={<ProtectedRoute adminOnly={true} />}>
-                        <Route
-                            path="admin"
-                            element={<Outlet />}
-                        >
+                    <Route path="admin" element={<ProtectedRoute adminOnly={true} />}>
                             <Route
                                 path="reg"
                                 element={<ClientRegistrationForm />}
@@ -57,10 +53,10 @@ function App() {
                                 path="*"
                                 element={<NotFound />}
                             />
-                        </Route>
                     </Route>
 
                     <Route
+                        path="superadmin"
                         element={
                             <ProtectedRoute
                                 adminOnly={false}
@@ -69,18 +65,17 @@ function App() {
                         }
                     >
                         <Route
-                            path="superadmin"
-                            element={<Outlet />}
-                        >
-                            <Route
-                                path="logs"
-                                element={<SuperAdminLogs />}
-                            />
-                            <Route
-                                path="*"
-                                element={<NotFound />}
-                            />
-                        </Route>
+                            path=""
+                            element={<NotFound />}
+                        />
+                        <Route
+                            path="logs"
+                            element={<SuperAdminLogs />}
+                        />
+                        <Route
+                            path="*"
+                            element={<NotFound />}
+                        />
                     </Route>
 
                     {/* Fallback Routes */}

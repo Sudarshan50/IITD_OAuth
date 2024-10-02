@@ -11,116 +11,94 @@ import {
 } from "../utils/stateManager.js";
 import { logUserAction } from "../utils/logFunction.js";
 import { validationResult, query, check } from "express-validator";
-import { rateLimitByUserId } from "../middleware/rateLimitter.js";
-
-const windowMs = 15 * 60 * 1000;
-const maxRequests = 100;
+import {
+  generateOnboardingToken,
+  verifyOnboardingToken,
+} from "../utils/tokenUtils.js";
+import axios from "axios";
 
 let auth = {};
 
-auth.verify = [
-  query("client_id").isString().notEmpty(),
-  query("redirect_uri")
-    .isURL({
-      protocols: ["http", "https"],
-      require_tld: false,
-    })
-    .notEmpty(),
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
+auth.verify = async (req, res) => {
+  return res.status(200).json({
+    message: req.client.clientName,
+  });
+};
 
-      const { client_id, redirect_uri } = req.query;
-
-      const check = await oauth_client.findOne({
-        clientId: client_id,
-        redirectUri: { $in: [redirect_uri] },
+auth.authorize = async (req, res) => {
+  try {
+    const accessToken = req.body.accessToken;
+    const msUser = await axios
+      .get("https://graph.microsoft.com/v1.0/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+        return null;
       });
 
-      if (!check) {
-        return res.status(400).json("Invalid client or redirect URI");
-      }
-
-      res.cookie("client_id", client_id, {
-        // httpOnly: true,
-        // secure: true,
-        // sameSite: "Strict",
-      });
-      res.cookie("redirect_uri", redirect_uri, {
-        // httpOnly: true,
-        // secure: true,
-        // sameSite: "Strict",
-      });
-
-      const redirectUrl = `http://localhost:5173/signin?client_name=${check.clientName}&client_id=${client_id}&redirect_uri=${redirect_uri}`;
-      res.redirect(redirectUrl);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json("Internal Server Error");
+    if (!msUser) {
+      return res.status(500).json("Error fetching user data");
     }
-  },
-];
 
-auth.authorize = [
-  query("client_id").isString().notEmpty(),
-  query("redirect_uri")
-    .isURL({
-      protocols: ["http", "https"],
-      require_tld: false,
-    })
-    .notEmpty(),
-  rateLimitByUserId(windowMs, maxRequests),
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-      const { client_id, redirect_uri } = req.query;
-      const clientCheck = await oauth_client.findOne({
-        clientId: client_id,
-        redirectUri: { $in: [redirect_uri] },
+    let user = await User.findOne({ msId: msUser.id });
+    if (!user) {
+      user = new User({
+        username: msUser.displayName,
+        msId: msUser.id,
+        email: msUser.mail,
+        kerberosId: msUser.mail.split("@")[0],
       });
-      if (!clientCheck || !clientCheck.grants.includes("authorization_code")) {
-        return res.status(400).json("Invalid grant type");
-      }
-
-      const user = await User.findOne({ msId: req.user.id });
-
-      if (!user.onboarding) {
-        return res.redirect("http://localhost:5173/onboarding");
-      }
-
-      const state = await generateStateParameter();
-      const auth_code = await generateAuthorizationCode(client_id, req.user.id);
-
-      await logUserAction(req.user.id, client_id, "Login Initiated");
-
-      const redirectUrl = `${redirect_uri}/callback?grant_type=auth_code&code=${auth_code}&state=${state}`;
-      res.redirect(redirectUrl);
-    } catch (error) {
-      await logUserAction(req.user.id, req.cookies.client_id, error.message);
-      console.error(error);
-      res.status(500).json("An error occurred");
+      await user.save();
+      await logUserAction(user._id, req.body.client_id, "User Created");
     }
-  },
-];
+    if (!user.completedOnboarding) {
+      const token = generateOnboardingToken(user,req.body.client_id, req.body.redirect_uri);
+      await logUserAction(
+        user._id,
+        req.body.client_id,
+        "Onboarding Incomplete"
+      );
+      return res.status(206).json({
+        message: "Onboarding Incomplete",
+        token: token,
+      });
+    }
+    const state = await generateStateParameter();
+    const auth_code = await generateAuthorizationCode(
+      req.body.client_id,
+      user._id
+    );
 
+    await logUserAction(user._id, req.body.client_id, "Login Initiated");
+
+    res.status(200).json({
+      auth_code,
+      state,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("An error occurred");
+  }
+};
 auth.client_auth_verify = [
   check("client_id").isString().notEmpty(),
   check("auth_code").isString().notEmpty(),
   check("client_secret").isString().notEmpty(),
   check("state").isString().notEmpty(),
+  check("grant_type").isString().isIn(["authorization_code"]), // TODO: Add support for other grant types.
   async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { client_id, auth_code, client_secret, state } = req.body;
+      const { client_id, auth_code, client_secret, state,grant_type } = req.body;
       const client = await oauth_client.findOne({ clientId: client_id });
       const checkSecret = await bcrypt.compare(
         client_secret,
@@ -129,12 +107,16 @@ auth.client_auth_verify = [
       const checkState = await validateStateParameter(state);
 
       if (!client || !checkSecret || !checkState) {
-        return res.status(400).json("Invalid Credentials");
+        return res.status(400).json("Invalid Client credentials or state");
+      }
+
+      if (!client.grants.includes(grant_type)) {
+        return res.status(400).json("Invalid Grant Type");
       }
 
       const authCodeData = await useAuthorizationCode(auth_code);
       const userId = authCodeData.userId;
-      const user = await User.findOne({ msId: userId });
+      const user = await User.findById(userId);
 
       if (!user) {
         return res.status(400).json("User not found");
@@ -146,6 +128,7 @@ auth.client_auth_verify = [
       }
 
       if (client.scope.includes("read")) {
+        // TODO: Change the use of scope to send only the required data.
         await logUserAction(userId, client_id, "Read Access Granted");
         return res.status(200).json({
           user: {
@@ -158,42 +141,65 @@ auth.client_auth_verify = [
           },
         });
       }
+      await logUserAction(userId, client_id, "Read Access Denied");
+      return res.status(403).json({
+        message: "Forbidden",
+      });
     } catch (err) {
+      console.error(err);
       res.status(500).json(err.message);
     }
   },
 ];
-
 auth.onboarding = [
-  check("hostel").isString().notEmpty(),
-  check("msId").isString().notEmpty(),
-  check("dateOfBirth").isString().notEmpty(),
+  check("hostel").isString().isIn(["vindyachal"]),
+  check("dateOfBirth").isDate().notEmpty(),
   check("instagramId").isString().optional(),
   check("mobileNo").isMobilePhone().notEmpty(),
+  check("token")
+    .isString()
+    .notEmpty()
+    .matches(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/),
   async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { hostel, msId, dateOfBirth, instagramId, mobileNo } = req.body;
-      const user = await User.findOne({ msId: msId });
-      if (!user) {
-        return res.status(404).json("User not found");
+      const tokendata = verifyOnboardingToken(req.body.token);
+      if (!tokendata) {
+        return res.status(400).json("Invalid Token");
       }
+      const user = await User.findById(tokendata.sub);
+      if (user.completedOnboarding) {
+        return res.status(400).json("User already onboarded");
+      }
+      const { hostel, dateOfBirth, instagramId, mobileNo } = req.body;
 
       user.hostel = hostel;
       user.dateOfBirth = dateOfBirth;
       user.instagramId = instagramId;
       user.mobileNo = mobileNo;
-      user.onboarding = true;
+      user.completedOnboarding = true;
       await user.save();
 
-      req.user = {
-        id: msId,
-      };
+      const state = await generateStateParameter();
+      const auth_code = await generateAuthorizationCode(
+        tokendata.client_id,
+        user._id
+      );
+      await logUserAction(
+        user._id,
+        tokendata.client_id,
+        "Onboarding Complete and Login Initiated"
+      );
 
-      res.status(200).json("Onboarding Successful");
+      res.status(200).json({
+        redirect_uri: tokendata.redirect_uri,
+        client_id: tokendata.client_id,
+        auth_code,
+        state,
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json("Internal Server Error");
@@ -202,3 +208,5 @@ auth.onboarding = [
 ];
 
 export default auth;
+
+//client cred-->download option..->filename format bhi sensible..

@@ -1,19 +1,8 @@
 import crypto from "crypto";
 import { redisClient } from "../lib/redis.js";
 
-// Helper function to Base64 URL encode a buffer
-function base64URLEncode(buffer) {
-  return buffer
-    .toString("base64")
-    .replace(/\+/g, "-") // Replace + with -
-    .replace(/\//g, "_") // Replace / with _
-    .replace(/=+$/, ""); // Remove padding characters (=)
-}
-
-// Generate Authorization Code using Base64 URL encoding
 export async function generateAuthorizationCode(clientId, userId) {
-  const code = base64URLEncode(crypto.randomBytes(20)); // 20-byte random string Base64 URL encoded
-
+  const code = crypto.randomBytes(20).toString("base64url");
   const authCodeData = {
     clientId,
     userId,
@@ -23,7 +12,7 @@ export async function generateAuthorizationCode(clientId, userId) {
     `auth_code:${code}`,
     JSON.stringify(authCodeData),
     "EX",
-    1200,
+    1200  // TODO: Set the expiration time to 1 minutes
   );
   return code;
 }
@@ -38,6 +27,6 @@ export async function useAuthorizationCode(code) {
   const authCodeData = JSON.parse(authCodeDataString);
 
   //shorten the life of code...
-  await redisClient.expire(`auth_code:${code}`, 60); // 60 seconds expiration
+  await redisClient.del(`auth_code:${code}`); // 60 seconds expiration
   return authCodeData;
 }

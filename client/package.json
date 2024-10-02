@@ -12,6 +12,8 @@
         "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
     },
     "dependencies": {
+        "@azure/msal-browser": "^3.24.0",
+        "@azure/msal-react": "^2.1.0",
         "@heroicons/react": "^2.1.5",
         "@material-tailwind/react": "^2.1.10",
         "@mui/icons-material": "^6.1.1",

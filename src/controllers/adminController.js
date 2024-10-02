@@ -7,54 +7,59 @@ import Admin from "../models/admin.js";
 import jwt from "jsonwebtoken";
 import { logAdminAction } from "../utils/superAdminLogger.js";
 import AdminLogs from "../models/admin_logs.js";
+import { validationResult, query, check } from "express-validator";
 
 let admin = {};
 
-const base64UrlEncode = (hexString) =>
-  Buffer.from(hexString, "hex")
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-
-admin.register = async (req, res) => {
-  try {
-    const currAdmin = await Admin.findById(req.admin);
-    if (!currAdmin) {
-      return res.status(401).json("Unauthorized");
+admin.registerClient = [
+  check("client_name").isString().notEmpty(),
+  check("redirect_uris")
+    .isArray()
+    .custom((array) =>
+      array.every((uri) =>
+        check(uri).isURL({
+          protocols: ["http", "https"],
+          tsld: false,
+        })
+      )
+    ),
+  async (req, res) => {
+    try {
+      const currAdmin = await Admin.findById(req.admin);
+      if (!currAdmin) {
+        return res.status(401).json("Unauthorized");
+      }
+      const { client_name } = req.body;
+      const redirect_uris = req.body.redirect_uris;
+      const client_id = crypto.randomBytes(20).toString("base64url");
+      const client_secret = crypto.randomBytes(20).toString("base64url");
+      const client = new OAuthClient({
+        clientId: client_id,
+        clientName: client_name,
+        clientSecretHash: client_secret,
+        redirectUri: redirect_uris,
+        owner: req.admin,
+      });
+      await client.save();
+      currAdmin.ownedClients.push(client_id);
+      await currAdmin.save();
+      logAdminAction(
+        req.admin,
+        "Client created successfully",
+        `Client ID: ${client_id}`
+      );
+      res.status(201).json({
+        client_id,
+        client_name,
+        client_secret,
+        redirect_uris,
+      });
+    } catch (error) {
+      logAdminAction(req.admin, "Client creation failed", error.message);
+      res.status(500).json(error.message);
     }
-    const { client_name } = req.body;
-    const redirect_uris = req.body.redirect_uris;
-    const client_id_generate = crypto.randomBytes(20).toString("hex");
-    const client_id = base64UrlEncode(client_id_generate);
-    const client_secret_generate = crypto.randomBytes(20).toString("hex");
-    const client_secret = base64UrlEncode(client_secret_generate);
-    const client = new OAuthClient({
-      clientId: client_id,
-      clientName: client_name,
-      clientSecretHash: client_secret,
-      redirectUri: redirect_uris,
-      owner: req.admin,
-    });
-    await client.save();
-    currAdmin.ownedClients.push(client_id);
-    await currAdmin.save();
-    logAdminAction(
-      req.admin,
-      "Client created successfully",
-      `Client ID: ${client_id}`,
-    );
-    res.status(201).json({
-      client_id,
-      client_name,
-      client_secret,
-      redirect_uris,
-    });
-  } catch (error) {
-    logAdminAction(req.admin, "Client creation failed", error.message);
-    res.status(500).json(error.message);
-  }
-};
+  },
+];
 
 admin.signIn = async (req, res) => {
   try {
@@ -169,7 +174,7 @@ admin.updateClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client updated successfully",
-        `Client ID: ${client_id}`,
+        `Client ID: ${client_id}`
       );
       return res.status(200).json(client);
     } else if (permission_code === "admin") {
@@ -188,7 +193,7 @@ admin.updateClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client updated successfully",
-        `Client ID: ${client_id}`,
+        `Client ID: ${client_id}`
       );
       res.status(200).json(client);
     }
@@ -212,7 +217,7 @@ admin.deleteClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client deleted successfully",
-        `Client ID: ${client_id}`,
+        `Client ID: ${client_id}`
       );
       return res.status(200).json("Client deleted successfully");
     } else if (permission_code === "admin") {
@@ -227,7 +232,7 @@ admin.deleteClient = async (req, res) => {
       logAdminAction(
         req.admin,
         "Client deleted successfully",
-        `Client ID: ${client_id}`,
+        `Client ID: ${client_id}`
       );
       return res.status(200).json("Client deleted successfully");
     }
