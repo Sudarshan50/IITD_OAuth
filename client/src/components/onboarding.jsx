@@ -52,11 +52,17 @@ const OnboardingForm = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-                <h2 className="mb-4 text-2xl font-semibold text-gray-700 text-center">Onboarding Form</h2>
-                <p className="text-gray-600 text-center">Welcome <strong>{username}</strong>, please fill in the following details to complete your onboarding.</p>
-                <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                <h2 className="mb-4 text-center text-2xl font-semibold text-gray-700">Onboarding Form</h2>
+                <p className="text-center text-gray-600">
+                    Welcome <strong>{username}</strong>, please fill in the following details to complete your
+                    onboarding.
+                </p>
+                <form
+                    onSubmit={handleSubmit}
+                    className="mt-6 space-y-4"
+                >
                     {/* Hostel */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Hostel</label>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button, Spinner } from "@material-tailwind/react";
+import { Button, Spinner, Tooltip, IconButton } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import api from "../../components/api";
 import { toast } from "react-toastify";
+import api from "../../components/api";
+import { ClipboardIcon } from "@heroicons/react/20/solid";
 import Navbar from "./navbar";
 
 const Dashboard = () => {
@@ -32,14 +33,19 @@ const Dashboard = () => {
             setLoading(true);
             try {
                 await api.delete(`/admin/client/${client_id}`);
-                toast.success("Client removed successfully!", { autoClose: 1000 });
+                toast.success("Client removed successfully!", { autoClose: 2000 });
                 fetchClients();
             } catch (err) {
-                toast.error(`Failed to remove client: ${err.message}`, { autoClose: 1000 });
+                toast.error(`Failed to remove client: ${err.message}`, { autoClose: 2000 });
             } finally {
                 setLoading(false);
             }
         }
+    };
+
+    const handleCopyToClipboard = (clientId) => {
+        navigator.clipboard.writeText(clientId);
+        toast.info("Client ID copied to clipboard!", { autoClose: 1500 });
     };
 
     return (
@@ -50,7 +56,7 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="container mx-auto mt-8 p-4">
                 <>
-                    <h2 className="mb-4 text-xl font-semibold">Available Clients</h2>
+                    <h2 className="mb-4 text-xl font-semibold text-white">Available Clients</h2>
                     <div className="overflow-x-auto rounded-lg bg-blue-gray-100 p-6 shadow-md">
                         {loading ? (
                             <div className="flex items-center justify-center">
@@ -69,26 +75,40 @@ const Dashboard = () => {
                                     {clients.length > 0 ? (
                                         clients?.map((client) => (
                                             <tr
-                                                key={client.client_id}
+                                                key={client.clientId}
                                                 className="hover:bg-gray-300"
                                             >
-                                                <td className="px-4 py-3">{client.clientId}</td>
+                                                <td className="flex items-center space-x-2 px-4 py-3">
+                                                    <span>{client.clientId.slice(0, 8)}...</span>
+                                                    <Tooltip content="Copy Client ID">
+                                                        <IconButton
+                                                            variant="text"
+                                                            color="blue"
+                                                            className="p-1 hover:bg-gray-200"
+                                                            onClick={() => handleCopyToClipboard(client.clientId)}
+                                                        >
+                                                            <ClipboardIcon className="h-5 w-5" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </td>
                                                 <td className="px-4 py-3">{client.clientName}</td>
-                                                <td className="space-x-4 px-4 py-3">
-                                                    <Button
-                                                        className="rounded-lg bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-                                                        onClick={() =>
-                                                            navigate(`/admin/edit_client/${client.clientId}`)
-                                                        }
-                                                    >
-                                                        Edit
-                                                    </Button>
-                                                    <Button
-                                                        className="rounded-lg bg-red-500 px-3 py-1 text-white hover:bg-red-600"
-                                                        onClick={() => handleRemoveClient(client.clientId)}
-                                                    >
-                                                        Remove
-                                                    </Button>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                                                        <Button
+                                                            className="rounded-lg bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                                                            onClick={() =>
+                                                                navigate(`/admin/edit_client/${client.clientId}`)
+                                                            }
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            className="rounded-lg bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                                                            onClick={() => handleRemoveClient(client.clientId)}
+                                                        >
+                                                            Remove
+                                                        </Button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))

@@ -64,7 +64,14 @@ const ProtectedRoute = ({ adminOnly = false, superAdminOnly = false }) => {
             </div>
         );
 
-    return authorized ? <Outlet /> : <Navigate to={"/unauthorised"} />;
+    if (!authorized) {
+        setTimeout(() => {
+            <Navigate to={"/"} />;
+        }, 3000);
+        return <Navigate to={"/unauthorised"} />;
+    }
+
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

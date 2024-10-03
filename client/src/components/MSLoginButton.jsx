@@ -8,9 +8,10 @@ import { toast } from "react-toastify";
 
 const msalConfig = {
     auth: {
-        clientId: "862d6338-f77b-4382-bf23-1d7c183083a7",
-        authority: "https://login.microsoftonline.com/iitd.ac.in",
-        redirectUri: "http://localhost:5173",
+        //use env in clientid
+        clientId: `${import.meta.env.VITE_MS_CLIENT_ID}`,
+        authority: `${import.meta.env.VITE_MS_AUTHORITY}`,
+        redirectUri: `${import.meta.env.VITE_MS_REDIRECT_URI}`,
     },
     cache: {
         cacheLocation: "localStorage",
@@ -27,7 +28,7 @@ const MSLoginButtonImpl = ({ client_id, redirect_uri }) => {
     const handleMSLogin = () => {
         instance
             .loginPopup({
-                scopes: ["user.read"],
+                scopes: [`${import.meta.env.VITE_MS_SCOPE}`],
             })
             .then((response) => {
                 setLoading(true);
@@ -61,7 +62,6 @@ const MSLoginButtonImpl = ({ client_id, redirect_uri }) => {
             className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
             disabled={inProgress === "login" || loading}
         >
-
             <svg
                 className="mr-2 h-5 w-5"
                 xmlns="http://www.w3.org/2000/svg"
@@ -113,4 +113,3 @@ MSLoginButton.prototype = {
     client_id: PropTypes.string.isRequired,
     redirect_uri: PropTypes.string.isRequired,
 };
-

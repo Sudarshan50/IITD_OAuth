@@ -12,7 +12,6 @@ const SuperAdminLogs = () => {
             .get("/admin/adminLogs")
             .then((res) => {
                 if (res.status === 200) {
-                    console.log(res.data.logs);
                     setLogs(res.data.logs);
                     setLoading(false);
                 }

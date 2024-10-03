@@ -67,13 +67,13 @@ const EditClientForm = () => {
                     render() {
                         return "Client updated successfully!";
                     },
-                    autoClose: 500,
+                    autoClose: 2000,
                 },
                 error: {
                     render() {
                         return "Failed to update client";
                     },
-                    autoClose: 500,
+                    autoClose: 2000,
                 },
             })
             .then(() => {
@@ -89,8 +89,8 @@ const EditClientForm = () => {
             <Navbar />
             <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
                 {/* Form */}
-                <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 sm:p-8 shadow-md">
-                    <h2 className="mb-6 text-xl sm:text-2xl font-bold text-white">Edit Client Details</h2>
+                <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 shadow-md sm:p-8">
+                    <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">Edit Client Details</h2>
                     <form
                         onSubmit={handleSubmit}
                         className="space-y-6"

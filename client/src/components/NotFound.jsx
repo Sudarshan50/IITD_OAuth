@@ -10,7 +10,6 @@ const NotFound = () => {
             <Button
                 color="red"
                 className="animate-pulse"
-                ripple="light"
                 onClick={() => navigate("/")}
             >
                 Go Home

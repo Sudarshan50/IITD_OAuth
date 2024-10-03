@@ -31,7 +31,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         fetchClientInfo();
-    },[]);
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -62,13 +62,16 @@ const LoginPage = () => {
         <div className="flex min-h-screen flex-col justify-between bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
             {/* Login Section */}
             <div className="flex flex-grow items-center justify-center px-4 py-8">
-                <div className="flex flex-col md:flex-row w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
+                <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-lg md:flex-row">
                     {/* Left side: Login Form */}
-                    <div className="md:w-1/2 w-full p-8">
+                    <div className="w-full p-8 md:w-1/2">
                         <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {clientName}</h2>
 
                         {/* Login Form */}
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="space-y-6"
+                        >
                             {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -104,16 +107,19 @@ const LoginPage = () => {
 
                         {/* Microsoft Login Button */}
                         <div className="mt-6">
-                            <MSLoginButton client_id={client_id} redirect_uri={redirect_uri} />
+                            <MSLoginButton
+                                client_id={client_id}
+                                redirect_uri={redirect_uri}
+                            />
                         </div>
                     </div>
 
                     {/* Right side: Image */}
-                    <div className="flex md:w-1/2 w-full items-center justify-center p-4 md:p-0">
+                    <div className="flex w-full items-center justify-center p-4 md:w-1/2 md:p-0">
                         <img
                             src={logo}
                             alt="DevClub Logo"
-                            className="h-32 md:h-full object-contain"
+                            className="h-32 object-contain md:h-full"
                         />
                     </div>
                 </div>

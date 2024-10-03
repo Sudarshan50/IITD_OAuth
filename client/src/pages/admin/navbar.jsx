@@ -4,23 +4,34 @@ import { useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { pathname } = window.location;
+    const [role, setRole] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDrawer = () => {
         setIsOpen(!isOpen); // Toggle the drawer state
     };
 
+    useEffect(() => {
+        try {
+            const token = Cookies.get("adminToken");
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            setRole(payload.permission_code);
+        } catch (err) {
+            console.log(err);
+        }
+    }, [role]);
     const closeDrawer = () => {
         setIsOpen(false); // Close the drawer
     };
 
     return (
-        <nav className="relative bg-blue-gray-900 py-2 px-4 md:p-4 text-white">
+        <nav className="relative bg-blue-gray-900 px-4 py-2 text-white md:p-4">
             <div className="container mx-auto flex items-center justify-between">
                 <h1 className="text-lg font-bold md:text-2xl">Admin Dashboard</h1>
 
@@ -33,7 +44,16 @@ const Navbar = () => {
                 </div>
 
                 {/* Buttons for md and above */}
+
                 <div className="hidden space-x-4 md:flex">
+                    {pathname !== "/superadmin/logs" && role === "superadmin" && (
+                        <Button
+                            className="rounded-lg bg-green-400 px-4 py-2 font-semibold text-gray-900 hover:bg-green-500"
+                            onClick={() => navigate("/superadmin/logs")}
+                        >
+                            Admin Logs
+                        </Button>
+                    )}
                     {pathname !== "/admin/dashboard" && (
                         <Button
                             className="rounded-lg bg-green-400 px-4 py-2 font-semibold text-gray-900 hover:bg-green-500"
@@ -50,6 +70,7 @@ const Navbar = () => {
                             Register New Client
                         </Button>
                     )}
+
                     <Button
                         className="rounded-lg bg-red-400 px-4 py-2 font-semibold text-gray-900 hover:bg-red-500"
                         onClick={() => {
@@ -62,12 +83,12 @@ const Navbar = () => {
                                         error: "Logout failed!",
                                     },
                                     {
-                                        autoClose: 1000,
+                                        autoClose: 2000,
                                     }
                                 )
                                 .then((res) => {
                                     if (res.status === 200) {
-                                        cookie.remove("admin_token");
+                                        cookie.set("adminToken", "", { expires: 0 });
                                         navigate("/admin/signin");
                                     }
                                 })
@@ -90,8 +111,16 @@ const Navbar = () => {
                     ></div>
 
                     {/* Side Drawer */}
-                    <div className="fixed right-0 top-0 z-20 h-full w-64 sm:w-96 flex items-center justify-center bg-blue-gray-400 p-6 text-gray-900">
+                    <div className="fixed right-0 top-0 z-20 flex h-full w-64 items-center justify-center bg-blue-gray-400 p-6 text-gray-900 sm:w-96">
                         <div className="flex flex-col space-y-4">
+                            {pathname !== "/superadmin/logs" && role === "superadmin" && (
+                                <Button
+                                    className="rounded-lg bg-blue-400 px-4 py-2 font-semibold text-gray-900 hover:bg-blue-500"
+                                    onClick={() => navigate("/superadmin/logs")}
+                                >
+                                    Admin Logs
+                                </Button>
+                            )}
                             {pathname !== "/admin/dashboard" && (
                                 <Button
                                     className="rounded-lg bg-green-400 px-4 py-2 font-semibold text-gray-900 hover:bg-green-500"
@@ -126,7 +155,7 @@ const Navbar = () => {
                                                 error: "Logout failed!",
                                             },
                                             {
-                                                autoClose: 1000,
+                                                autoClose: 2000,
                                             }
                                         )
                                         .then((res) => {

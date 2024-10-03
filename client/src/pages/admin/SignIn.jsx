@@ -36,8 +36,8 @@ const AdminSignIn = () => {
 
     return (
         <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-gray-100">
-            <div className="w-full max-w-md rounded-lg bg-white px-3 py-6 sm:p-8 shadow-lg">
-                <h2 className="mb-6 text-center text-xl sm:text-2xl font-bold text-gray-800">Admin Sign In</h2>
+            <div className="w-full max-w-md rounded-lg bg-white px-3 py-6 shadow-lg sm:p-8">
+                <h2 className="mb-6 text-center text-xl font-bold text-gray-800 sm:text-2xl">Admin Sign In</h2>
                 <form
                     onSubmit={handleSignIn}
                     className="space-y-6"

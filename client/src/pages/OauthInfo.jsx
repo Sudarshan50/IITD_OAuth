@@ -16,6 +16,7 @@ const codeSnippet = `app.get("/callback", async (req, res) => {
 
   const client_id = process.env.CLIENT_ID;
   const client_secret = process.env.CLIENT_SECRET;
+  const grant_type = "authorization_code";
 
   // Ensure environment variables are set
   if (!client_id || !client_secret) {
@@ -30,6 +31,7 @@ const codeSnippet = `app.get("/callback", async (req, res) => {
       client_secret,
       auth_code: code,
       state,
+      grant_type,
     });
 
     // Check the response status
@@ -133,7 +135,7 @@ const OauthInfo = () => {
                             placing the security burden on a robust framework while allowing you to concentrate on
                             developing your application seamlessly.
                         </p>
-                        <p className="mb-4 text-sm md:text-base leading-relaxed">
+                        <p className="mb-4 text-sm leading-relaxed md:text-base">
                             With this OAuth solution, user authentication becomes straightforward, enhancing both
                             scalability and security. Rely on it for an efficient and easy-to-implement solution that
                             elevates your application&apos;s user experience.
@@ -153,17 +155,17 @@ const OauthInfo = () => {
                             appropriately. Upon successful registration, you will receive a <strong>client_id </strong>
                             and <strong>client_secret</strong>.
                         </p>
-                        <p className="mb-4 text-sm md:text-base leading-relaxed">
+                        <p className="mb-4 text-sm leading-relaxed md:text-base">
                             To register your client, follow the provided link to obtain your credentials. The login
                             request should look like this:
                             <code
                                 className={`${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} mt-2 block rounded-lg p-2`}
                             >
-                                /api/oauth/verify?client_id=&lt;client_id&gt;&redirect_uri=&lt;redirect_uri&gt;
+                                authServerUrl/signin/?client_id=&lt;client_id&gt;&redirect_uri=&lt;redirect_uri&gt;
                             </code>
                         </p>
                         <p
-                            className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} leading-relaxed text-sm md:text-base`}
+                            className={`${darkMode ? "bg-[#1f1f1f] text-gray-300" : "bg-white text-gray-900"} text-sm leading-relaxed md:text-base`}
                         >
                             Handle the callback request effectively and manage the token flow as demonstrated in the
                             example code below.
@@ -171,9 +173,11 @@ const OauthInfo = () => {
                     </div>
 
                     {/* Code Block with Syntax Highlighting and Copy Button */}
-                    <div className="col-span-1 rounded-lg bg-[#1f1f1f] px-2 py-3 md:p-6 shadow-lg transition-all md:col-span-2">
-                        <h2 className={`mb-4 text-xl md:text-2xl font-semibold text-white`}>Example Code Implementation</h2>
-                        <div className="relative rounded-lg bg-gray-900 p-2 md:p-4 text-white">
+                    <div className="col-span-1 rounded-lg bg-[#1f1f1f] px-2 py-3 shadow-lg transition-all md:col-span-2 md:p-6">
+                        <h2 className={`mb-4 text-xl font-semibold text-white md:text-2xl`}>
+                            Example Code Implementation
+                        </h2>
+                        <div className="relative rounded-lg bg-gray-900 p-2 text-white md:p-4">
                             <pre className="language-javascript">
                                 <code>{codeSnippet}</code>
                             </pre>

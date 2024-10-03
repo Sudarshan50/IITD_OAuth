@@ -36,23 +36,30 @@ function App() {
                     />
 
                     {/* Admin Routes */}
-                    <Route path="admin" element={<ProtectedRoute adminOnly={true} />}>
-                            <Route
-                                path="reg"
-                                element={<ClientRegistrationForm />}
-                            />
-                            <Route
-                                path="edit_client/:client_id"
-                                element={<EditClientForm />}
-                            />
-                            <Route
-                                path="dashboard"
-                                element={<Dashboard />}
-                            />
-                            <Route
-                                path="*"
-                                element={<NotFound />}
-                            />
+                    <Route
+                        path="admin"
+                        element={<ProtectedRoute adminOnly={true} />}
+                    >
+                        <Route
+                            path="reg"
+                            element={<ClientRegistrationForm />}
+                        />
+                        <Route
+                            path="edit_client/:client_id"
+                            element={<EditClientForm />}
+                        />
+                        <Route
+                            path="dashboard"
+                            element={<Dashboard />}
+                        />
+                        <Route
+                            path="*"
+                            element={<NotFound />}
+                        />
+                        <Route
+                            path=""
+                            element={<NotFound />}
+                        />
                     </Route>
 
                     <Route
@@ -88,7 +95,7 @@ function App() {
                         element={<UnAuthorised />}
                     />
                 </Routes>
-                <footer className="bg-blue-gray-900 py-4 text-center text-white">
+                <footer className="relative bg-blue-gray-900 py-4 text-center text-white">
                     <p className="text-sm">&copy; {new Date().getFullYear()} DevClub. All rights reserved.</p>
                 </footer>
             </BrowserRouter>
