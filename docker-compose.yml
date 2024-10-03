@@ -23,6 +23,9 @@ services:
         ports:
             - "5173:5173"
 
+        env_file:
+            - ./client/.env
+
     nginx:
         container_name: nginx
         build:
