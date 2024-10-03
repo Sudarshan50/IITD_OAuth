@@ -36,7 +36,7 @@ const OnboardingForm = () => {
         e.preventDefault();
         try {
             await axios
-                .post("http://localhost:3000/api/oauth/onboarding", formData)
+                .post("http://localhost:3000/api/auth/onboarding", formData)
                 .then((res) => {
                     if (res.status === 200) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
@@ -66,15 +66,38 @@ const OnboardingForm = () => {
                     {/* Hostel */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Hostel</label>
-                        <input
-                            type="text"
+                        <select
                             name="hostel"
                             value={formData.hostel}
                             onChange={handleChange}
-                            placeholder="Enter your hostel"
                             className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             required
-                        />
+                        >
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Select your hostel
+                            </option>
+                            <option value="aravali">Aravali</option>
+                            <option value="girnar">Girnar</option>
+                            <option value="jwalamukhi">Jwalamukhi</option>
+                            <option value="karakoram">Karakoram</option>
+                            <option value="kumaon">Kumaon</option>
+                            <option value="nilgiri">Nilgiri</option>
+                            <option value="shivalik">Shivalik</option>
+                            <option value="satpura">Satpura</option>
+                            <option value="udaigiri">Udaigiri</option>
+                            <option value="vindhyachal">Vindhyachal</option>
+                            <option value="zanskar">Zanskar</option>
+                            <option value="dronagiri">Dronagiri</option>
+                            <option value="saptagiri">Saptagiri</option>
+                            <option value="kailash">Kailash</option>
+                            <option value="sahyadri">Sahyadri</option>
+                            <option value="himadri">Himadri</option>
+                            <option value="nalanda">Nalanda</option>
+                            <option value="saptagiri">Saptagiri</option>
+                        </select>
                     </div>
 
                     {/* Date of Birth */}

@@ -8,7 +8,6 @@ import adminRouter from "./routes/auth.js";
 import oAuthRouter from "./routes/oAuth.js";
 import session from "express-session";
 import methodOverride from "method-override";
-import passport from "./config/passport.js";
 import { connectToRedis } from "./lib/redis.js";
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,9 +24,9 @@ app.use(
     cookie: { secure: false },
   }),
 );
-//passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+
+
+
 app.use(
   cors({
     origin: "*",
@@ -35,9 +34,13 @@ app.use(
   }),
 );
 
+
+
 //importing routes
 app.use("/api/admin", adminRouter);
-app.use("/api/oauth", oAuthRouter);
+app.use("/api/auth", oAuthRouter);
+
+
 
 connectToRedis();
 db().then(() => {

@@ -10,7 +10,7 @@ import {
   validateStateParameter,
 } from "../utils/stateManager.js";
 import { logUserAction } from "../utils/logFunction.js";
-import { validationResult, query, check } from "express-validator";
+import { validationResult, check } from "express-validator";
 import {
   generateOnboardingToken,
   verifyOnboardingToken,
@@ -58,7 +58,11 @@ auth.authorize = async (req, res) => {
       await logUserAction(user._id, req.body.client_id, "User Created");
     }
     if (!user.completedOnboarding) {
-      const token = generateOnboardingToken(user,req.body.client_id, req.body.redirect_uri);
+      const token = generateOnboardingToken(
+        user,
+        req.body.client_id,
+        req.body.redirect_uri
+      );
       await logUserAction(
         user._id,
         req.body.client_id,
@@ -98,7 +102,8 @@ auth.client_auth_verify = [
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { client_id, auth_code, client_secret, state,grant_type } = req.body;
+      const { client_id, auth_code, client_secret, state, grant_type } =
+        req.body;
       const client = await oauth_client.findOne({ clientId: client_id });
       const checkSecret = await bcrypt.compare(
         client_secret,
@@ -151,8 +156,31 @@ auth.client_auth_verify = [
     }
   },
 ];
+
 auth.onboarding = [
-  check("hostel").isString().isIn(["vindyachal"]),
+  check("hostel")
+    .isString()
+    .isIn([
+      "aravali",
+      "girnar",
+      "jwalamukhi",
+      "karakoram",
+      "kumaon",
+      "nilgiri",
+      "shivalik",
+      "satpura",
+      "udaigiri",
+      "vindhyachal",
+      "zanskar",
+      "dronagiri",
+      "saptagiri",
+      "kailash",
+      "sahyadri",
+      "himadri",
+      "nalanda",
+      "saptagiri",
+    ])
+    .notEmpty(),
   check("dateOfBirth").isDate().notEmpty(),
   check("instagramId").isString().optional(),
   check("mobileNo").isMobilePhone().notEmpty(),
@@ -208,5 +236,3 @@ auth.onboarding = [
 ];
 
 export default auth;
-
-//client cred-->download option..->filename format bhi sensible..

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import api from "../components/api";
 import { Spinner } from "@material-tailwind/react";
 import { MSLoginButton } from "../components/MSLoginButton";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
     const [clientName, setClientName] = useState("");
@@ -35,7 +36,7 @@ const LoginPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Yahan se Kuch Ni Hota..");
+        toast.warn("Login Via Microsoft");
     };
 
     if (loading) {

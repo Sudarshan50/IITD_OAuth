@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 
 const msalConfig = {
     auth: {
-        //use env in clientid
         clientId: `${import.meta.env.VITE_MS_CLIENT_ID}`,
         authority: `${import.meta.env.VITE_MS_AUTHORITY}`,
         redirectUri: `${import.meta.env.VITE_MS_REDIRECT_URI}`,
@@ -28,7 +27,7 @@ const MSLoginButtonImpl = ({ client_id, redirect_uri }) => {
     const handleMSLogin = () => {
         instance
             .loginPopup({
-                scopes: [`${import.meta.env.VITE_MS_SCOPE}`],
+                scopes: [`${import.meta.env.VITE_MS_SCOPES}`],
             })
             .then((response) => {
                 setLoading(true);
