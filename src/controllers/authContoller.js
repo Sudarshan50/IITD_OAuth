@@ -100,7 +100,7 @@ auth.client_auth_verify = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.status(400).json("Invalid Request");
       }
       const { client_id, auth_code, client_secret, state, grant_type } =
         req.body;
@@ -192,7 +192,7 @@ auth.onboarding = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json("Invalid Request");
       }
       const tokendata = verifyOnboardingToken(req.body.token);
       if (!tokendata) {

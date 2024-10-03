@@ -26,7 +26,7 @@ const codeSnippet = `app.get("/callback", async (req, res) => {
 
     try {
         // Make a request to auth server to verify the auth_code and request for resources with the available grant type
-        const response = await axios.post("http://localhost/api/auth/auth_verify", {
+        const response = await axios.post("https://iitdoauth.vercel.app/api/auth/auth_verify", {
             client_id,
             client_secret,
             auth_code: code,
@@ -161,7 +161,7 @@ const OauthInfo = () => {
                             <code
                                 className={`${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} mt-2 block rounded-lg p-2`}
                             >
-                                authServerUrl/signin/?client_id=&lt;client_id&gt;&redirect_uri=&lt;redirect_uri&gt;
+                                https://oauthdevclub.vercel.app/signin/?client_id=&lt;client_id&gt;&redirect_uri=&lt;redirect_uri&gt;
                             </code>
                         </p>
                         <p
