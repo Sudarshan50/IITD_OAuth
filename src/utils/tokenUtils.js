@@ -5,7 +5,7 @@ const generateOnboardingToken = (user,client_id,redirect_uri) => {
     username : user.username,
     client_id,
     redirect_uri,
-    iss: "https://example.com", // TODO: Change this to your domain
+    iss: "https://iitdoauth.vercel.app", // TODO: Change this to your domain
     token_type: "onboarding",
   };
 
@@ -22,7 +22,7 @@ const verifyOnboardingToken = (token) => {
     }
 
     if (
-      payload.iss !== "https://example.com" ||
+      payload.iss !== "https://iitdoauth.vercel.app" ||
       payload.token_type !== "onboarding"
     ) {
       return null;

@@ -12,7 +12,7 @@ export async function generateAuthorizationCode(clientId, userId) {
     `auth_code:${code}`,
     JSON.stringify(authCodeData),
     "EX",
-    1200  // TODO: Set the expiration time to 1 minutes
+    60
   );
   return code;
 }
