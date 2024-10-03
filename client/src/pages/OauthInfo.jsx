@@ -7,51 +7,51 @@ import { useNavigate } from "react-router-dom";
 
 // Sample OAuth code snippet
 const codeSnippet = `app.get("/callback", async (req, res) => {
-  const { code, state } = req.query;
-  
-  // Validate incoming parameters
-  if (!code || !state) {
-    return res.status(400).json({ message: "Missing code or state in the request." });
-  }
-
-  const client_id = process.env.CLIENT_ID;
-  const client_secret = process.env.CLIENT_SECRET;
-  const grant_type = "authorization_code";
-
-  // Ensure environment variables are set
-  if (!client_id || !client_secret) {
-    console.error("Client ID or Client Secret not configured.");
-    return res.status(500).json({ message: "Server configuration error." });
-  }
-
-  try {
-    // Make the request to the auth server to verify the code
-    const response = await axios.post("http://localhost/api/auth/auth_verify", {
-      client_id,
-      client_secret,
-      auth_code: code,
-      state,
-      grant_type,
-    });
-
-    // Check the response status
-    if (response.status === 200) {
-      const token = jwt.sign(
-        { user: response.data.user },
-        process.env.APP_SECRET,
-        { expiresIn: "1h" }
-      );
-      res.cookie("token", token);
-      return res.redirect("http://localhost:5174");
-    } else {
-     console.error("Error during authentication:", response.data.message);
-      return res.status(response.status).json({ message: "Error during authentication." });
+    const { code, state } = req.query;
+    
+    // Validate incoming parameters
+    if (!code || !state) {
+        return res.status(400).json({ message: "Missing code or state in the request." });
     }
-  } catch (err) {
-    // Log detailed error information
-    console.error("Error during OAuth callback:", err.message || err);
-    return res.status(500).json({ message: "Internal Server Error." });
-  }
+
+    const client_id = process.env.CLIENT_ID;
+    const client_secret = process.env.CLIENT_SECRET;
+    const grant_type = "authorization_code";
+
+    // Ensure environment variables are set
+    if (!client_id || !client_secret) {
+        console.error("Client ID or Client Secret not configured.");
+        return res.status(500).json({ message: "Server configuration error." });
+    }
+
+    try {
+        // Make a request to auth server to verify the auth_code and request for resources with the available grant type
+        const response = await axios.post("http://localhost/api/auth/auth_verify", {
+            client_id,
+            client_secret,
+            auth_code: code,
+            state,
+            grant_type,
+        });
+
+        // Check the response status and write the token logic accordingly...
+        if (response.status === 200) {
+            const token = jwt.sign(
+                { user: response.data.user },
+                process.env.APP_SECRET,
+                { expiresIn: "1h" }
+            );
+            res.cookie("token", token);
+            return res.redirect("http://localhost:5174"); // Redirect to the your application's home page
+        } else {
+            console.error("Error during authentication:", response.data.message);
+            return res.status(response.status).json({ message: "Error during authentication." });
+        }
+    } catch (err) {
+        // Log detailed error information
+        console.error("Error during OAuth callback:", err.message || err);
+        return res.status(500).json({ message: "Internal Server Error." });
+    }
 });`;
 
 const OauthInfo = () => {
