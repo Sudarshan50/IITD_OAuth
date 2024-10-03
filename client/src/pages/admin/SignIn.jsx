@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 import cookie from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../../components/api";
 
 const AdminSignIn = () => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ const AdminSignIn = () => {
     const handleSignIn = async (e) => {
         e.preventDefault();
         toast.promise(
-            axios.post("http://localhost:3000/api/admin/signin", {
+            api.post("admin/signin", {
                 userName,
                 password,
             }),

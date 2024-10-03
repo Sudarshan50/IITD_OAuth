@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "./api";
 
 const OnboardingForm = () => {
     // State for the form fields
@@ -35,8 +35,8 @@ const OnboardingForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios
-                .post("http://localhost:3000/api/auth/onboarding", formData)
+            await api
+                .post("auth/onboarding", formData)
                 .then((res) => {
                     if (res.status === 200) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
@@ -121,7 +121,7 @@ const OnboardingForm = () => {
                             name="instagramId"
                             value={formData.instagramId}
                             onChange={handleChange}
-                            placeholder="Enter your Instagram ID"
+                            placeholder="Enter your Instagram ID (optional)"
                             className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         />
                     </div>
