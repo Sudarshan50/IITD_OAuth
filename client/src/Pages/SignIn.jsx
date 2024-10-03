@@ -6,7 +6,7 @@ import { Spinner } from "@material-tailwind/react";
 import { MSLoginButton } from "../components/MSLoginButton";
 import { toast } from "react-toastify";
 
-const LoginPage = () => {
+const SignIn = () => {
     const [clientName, setClientName] = useState("");
     const [verifyError, setVerifyError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -129,4 +129,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default SignIn;
