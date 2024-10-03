@@ -10,7 +10,7 @@ export default defineConfig(({ command }) => ({
                 ? {}
                 : {
                       "/api": {
-                          target: "http://localhost:3000",
+                          target: `${import.meta.env.VITE_API_URL}`,
                       },
                   },
         host: "0.0.0.0",
