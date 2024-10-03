@@ -10,7 +10,7 @@ export default defineConfig(({ command }) => ({
                 ? {}
                 : {
                       "/api": {
-                          target: `${import.meta.env.VITE_API_URL}`,
+                          target: "https://iitdoauth.vercel.app/",
                       },
                   },
         host: "0.0.0.0",
