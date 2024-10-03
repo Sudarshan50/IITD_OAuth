@@ -32,7 +32,7 @@ const MSLoginButtonImpl = ({ client_id, redirect_uri }) => {
             .then((response) => {
                 setLoading(true);
                 API.post(
-                    "/oauth/callback/microsoft",
+                    "/auth/callback/microsoft",
                     { accessToken: response.accessToken, client_id, redirect_uri },
                     { withCredentials: false }
                 )

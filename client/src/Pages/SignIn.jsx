@@ -18,7 +18,7 @@ const LoginPage = () => {
     const fetchClientInfo = async () => {
         setLoading(true);
         await api
-            .post(`/oauth/verify`, { client_id, redirect_uri })
+            .post(`/auth/verify`, { client_id, redirect_uri })
             .then((res) => {
                 if (res.status === 200) {
                     setClientName(res.data.message);

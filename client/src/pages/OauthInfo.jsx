@@ -26,7 +26,7 @@ const codeSnippet = `app.get("/callback", async (req, res) => {
 
   try {
     // Make the request to the auth server to verify the code
-    const response = await axios.post("http://localhost/api/oauth/auth_verify", {
+    const response = await axios.post("http://localhost/api/auth/auth_verify", {
       client_id,
       client_secret,
       auth_code: code,

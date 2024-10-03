@@ -68,7 +68,7 @@ const ClientRegistrationForm = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${clientCred.client_id}_cred.json`;
+        a.download = `${clientCred?.client_name}_cred.json`;
         a.click();
         URL.revokeObjectURL(url);
     };
