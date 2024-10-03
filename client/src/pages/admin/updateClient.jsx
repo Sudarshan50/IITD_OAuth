@@ -3,26 +3,41 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../components/api";
 import Navbar from "./navbar";
+import { Spinner } from "@material-tailwind/react";
 
 // Simulating a function to fetch client data (replace with your API call)
 
 const EditClientForm = () => {
-    const { client_id } = useParams();
     const navigate = useNavigate();
+    const { client_id } = useParams();
     const [clientData, setClientData] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const fetchClientData = async () => {
         try {
-            const res = await api.get(`/admin/client/${client_id}`);
-            if (res.status === 200) {
-                setClientData(res.data);
-                setClientData((prevData) => ({
-                    ...prevData,
-                    client_id: client_id,
-                }));
-            }
+            setLoading(true);
+            api.get(`/admin/client/${client_id}`)
+                .then((res) => {
+                    if (res.status === 200) {
+                        setClientData(res.data);
+                        setClientData((prevData) => ({
+                            ...prevData,
+                            client_id: client_id,
+                        }));
+                        setLoading(false);
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setLoading(false);
+                    toast.error("Failed to fetch client data");
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         } catch (err) {
-            throw new Error(err);
+            setLoading(false);
+            toast.error("Failed to fetch client data");
         }
     };
     useEffect(() => {
@@ -81,8 +96,18 @@ const EditClientForm = () => {
             })
             .catch((err) => {
                 console.error(err);
+                toast.error("Failed to update client");
             });
     };
+
+
+    if (loading) {
+        return (
+            <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
+                <Spinner className="h-12 w-12 text-white" />
+            </div>
+        );
+    }
 
     return (
         <>

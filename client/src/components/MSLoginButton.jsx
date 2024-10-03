@@ -5,6 +5,7 @@ import API from "./api";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import { Spinner } from "@material-tailwind/react";
 
 const msalConfig = {
     auth: {
@@ -55,6 +56,13 @@ const MSLoginButtonImpl = ({ client_id, redirect_uri }) => {
                 setLoading(false);
             });
     };
+    if (loading || inProgress === "login") {
+        return (
+            <div className="flex items-center justify-center">
+                <Spinner className="h-8 w-8" />
+            </div>
+        );
+    }
     return (
         <button
             onClick={handleMSLogin}

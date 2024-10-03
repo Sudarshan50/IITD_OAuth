@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Spinner } from "@material-tailwind/react";
 import api from "./api";
 
 const OnboardingForm = () => {
     // State for the form fields
+    const navigate = useNavigate();
     const token = new URLSearchParams(window.location.search).get("token");
     const [formData, setFormData] = useState({
         hostel: "",
@@ -15,7 +17,7 @@ const OnboardingForm = () => {
     });
 
     const [username, setUsername] = useState("");
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         try {
@@ -24,6 +26,9 @@ const OnboardingForm = () => {
             setUsername(payload.username);
         } catch {
             console.log("Error decoding token");
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
             navigate("/unauthorised");
         }
     }, [token, navigate]);
@@ -35,21 +40,34 @@ const OnboardingForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setLoading(true);
             await api
                 .post("auth/onboarding", formData)
                 .then((res) => {
                     if (res.status === 200) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
+                        setLoading(false);
                     }
                 })
                 .catch((err) => {
+                    setLoading(false);
                     toast.error(err.response?.data || "Error submitting form");
-                });
+                })
+                .finally(() => setLoading(false));
         } catch (err) {
             console.log(err);
+            setLoading(false);
             toast.error("Error submitting form");
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
+                <Spinner className="h-12 w-12 text-white" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
