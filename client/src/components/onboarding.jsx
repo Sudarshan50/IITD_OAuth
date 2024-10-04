@@ -5,7 +5,6 @@ import { Spinner } from "@material-tailwind/react";
 import api from "./api";
 
 const OnboardingForm = () => {
-    // State for the form fields
     const navigate = useNavigate();
     const token = new URLSearchParams(window.location.search).get("token");
     const [formData, setFormData] = useState({
@@ -23,6 +22,10 @@ const OnboardingForm = () => {
         try {
             const payloadBase64 = token.split(".")[1];
             const payload = JSON.parse(atob(payloadBase64));
+            if (Date.now() >= payload.exp * 1000) {
+                toast.warn("Token expired, please login again");
+                return navigate(`/signin?client_id=${payload.client_id}&redirect_uri=${payload.redirect_uri}`);
+            }
             setUsername(payload.username);
         } catch {
             console.log("Error decoding token");
@@ -44,7 +47,7 @@ const OnboardingForm = () => {
             await api
                 .post("auth/onboarding", formData)
                 .then((res) => {
-                    if (res.status === 200) {
+                    if (res.status === 200 || res.status === 208) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
                         setLoading(false);
                     }

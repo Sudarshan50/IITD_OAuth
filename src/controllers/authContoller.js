@@ -200,7 +200,7 @@ auth.onboarding = [
       }
       const user = await User.findById(tokendata.sub);
       if (user.completedOnboarding) {
-        return res.status(400).json("User already onboarded");
+        return res.status(208).json("User already onboarded");
       }
       const { hostel, dateOfBirth, instagramId, mobileNo } = req.body;
 

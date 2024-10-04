@@ -9,7 +9,7 @@ const VerifyClientMiddleware = [
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         console.log(errors);
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json("Invalid Request");
       }
 
       const { client_id, redirect_uri } = req.body;
