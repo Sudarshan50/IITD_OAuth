@@ -150,14 +150,16 @@ const OauthInfo = () => {
                             How to Get Started
                         </h2>
                         <p className="mb-4 text-sm leading-relaxed md:text-base">
-                            After logging in, this OAuth returns user data directly. If a user signs in for the first
-                            time, be sure to store their information in your database and implement your token logic
-                            appropriately. Upon successful registration, you will receive a <strong>client_id </strong>
-                            and <strong>client_secret</strong>.
+                            To register a client, first click on <strong>Get Started</strong> and log in using the admin
+                            credentials. After logging in, you will need to register the client with the necessary grant
+                            types on the authentication server. Once registered, you will receive a{" "}
+                            <strong>client_id</strong>, <strong>client_secret</strong>, and <strong>grant_type</strong>.
+                            Be sure to store these securely, such as in the environment variables of your application.
+                            To invoke the login request to the authentication server, send the request from the frontend
+                            in the following <strong>format:-</strong>
                         </p>
+
                         <p className="mb-4 text-sm leading-relaxed md:text-base">
-                            To register your client, follow the provided link to obtain your credentials. The login
-                            request should look like this:
                             <code
                                 className={`${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-900"} mt-2 block rounded-lg p-2`}
                             >
