@@ -15,6 +15,7 @@ const SignIn = () => {
     const client_id = query.get("client_id");
     const redirect_uri = query.get("redirect_uri");
 
+
     const fetchClientInfo = async () => {
         setLoading(true);
         await api
