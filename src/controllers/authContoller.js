@@ -58,7 +58,7 @@ auth.authorize = async (req, res) => {
       await logUserAction(user._id, req.body.client_id, "User Created");
     }
     const clientGrantCheck = await oauth_client.findOne({clientId: req.body.client_id});
-    if (!user.completedOnboarding || !clientGrantCheck?.grants?.includes("ONB302")) {
+    if (!user.completedOnboarding && !clientGrantCheck?.grants?.includes("ONB302")) {
       const token = generateOnboardingToken(
         user,
         req.body.client_id,
