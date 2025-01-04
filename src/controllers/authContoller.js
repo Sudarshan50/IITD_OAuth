@@ -57,7 +57,8 @@ auth.authorize = async (req, res) => {
       await user.save();
       await logUserAction(user._id, req.body.client_id, "User Created");
     }
-    if (!user.completedOnboarding) {
+    const clientGrantCheck = await oauth_client.findOne({clientId: req.body.client_id});
+    if (!user.completedOnboarding || !clientGrantCheck?.grants?.includes("ONB302")) {
       const token = generateOnboardingToken(
         user,
         req.body.client_id,
@@ -137,12 +138,12 @@ auth.client_auth_verify = [
         await logUserAction(userId, client_id, "Read Access Granted");
         return res.status(200).json({
           user: {
-            name: user.username,
-            email: user.email,
-            hostel: user.hostel,
-            dateOfBirth: user.dateOfBirth,
-            instagramId: user.instagramId,
-            mobileNo: user.mobileNo,
+            name: user?.username,
+            email: user?.email,
+            hostel: user?.hostel,
+            dateOfBirth: user?.dateOfBirth,
+            instagramId: user?.instagramId,
+            mobileNo: user?.mobileNo,
           },
         });
       }
