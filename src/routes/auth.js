@@ -5,7 +5,7 @@ import { adminMiddleWare } from "../middleware/adminMiddleWare.js";
 const adminRouter = e.Router();
 
 adminRouter.post("/signin", admin.signIn);
-adminRouter.post("/signup", admin.signUp);
+// adminRouter.post("/signup", admin.signUp);
 adminRouter.post("/register", adminMiddleWare, admin.registerClient);
 adminRouter.get("/clients", adminMiddleWare, admin.getAllClients);
 adminRouter.get("/client/:client_id", adminMiddleWare, admin.getClientById);
