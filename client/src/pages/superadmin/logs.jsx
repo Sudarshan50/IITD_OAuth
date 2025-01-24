@@ -1,6 +1,6 @@
+import { Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import api from "../../components/api";
-import { Spinner } from "@material-tailwind/react";
 import Navbar from "../admin/navbar";
 
 const SuperAdminLogs = () => {
@@ -31,7 +31,7 @@ const SuperAdminLogs = () => {
     return (
         <>
             <Navbar />
-            <div className="min-h-[calc(88.4vh-1px)] bg-gray-900 p-4">
+            <div className="min-h-screen pb-8 bg-gray-900 p-4">
                 {/* Logs Table */}
                 <div className="container mx-auto">
                     <h2 className="mb-4 text-xl font-semibold text-white">Admin Activity Logs</h2>

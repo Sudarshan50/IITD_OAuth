@@ -1,7 +1,7 @@
+import { Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Spinner } from "@material-tailwind/react";
 import api from "./api";
 
 const OnboardingForm = () => {
@@ -66,14 +66,14 @@ const OnboardingForm = () => {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
+            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500 p-4">
                 <Spinner className="h-12 w-12 text-white" />
             </div>
         );
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
+        <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500 p-4">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
                 <h2 className="mb-4 text-center text-2xl font-semibold text-gray-700">Onboarding Form</h2>
                 <p className="text-center text-gray-600">

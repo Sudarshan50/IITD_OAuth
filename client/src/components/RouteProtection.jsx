@@ -1,8 +1,8 @@
+import { Spinner } from "@material-tailwind/react";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import api from "./api";
-import Cookies from "js-cookie";
-import { Spinner } from "@material-tailwind/react";
 
 // Mock functions to simulate authentication and admin check
 const isAuthenticated = async () => {
@@ -65,9 +65,6 @@ const ProtectedRoute = ({ adminOnly = false, superAdminOnly = false }) => {
         );
 
     if (!authorized) {
-        setTimeout(() => {
-            <Navigate to={"/"} />;
-        }, 3000);
         return <Navigate to={"/unauthorised"} />;
     }
 

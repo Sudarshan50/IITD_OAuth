@@ -1,9 +1,9 @@
+import { ClipboardIcon } from "@heroicons/react/20/solid";
+import { Button, IconButton, Spinner, Tooltip } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { Button, Spinner, Tooltip, IconButton } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../components/api";
-import { ClipboardIcon } from "@heroicons/react/20/solid";
 import Navbar from "./navbar";
 
 const Dashboard = () => {
@@ -49,7 +49,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="min-h-[calc(94.84vh-1px)] overflow-hidden bg-black">
+        <div className="min-h-screen pb-8 overflow-hidden bg-black">
             {/* Navbar */}
             <Navbar />
 

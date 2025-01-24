@@ -1,6 +1,6 @@
 import { useState } from "react";
-import api from "../../components/api";
 import { toast } from "react-toastify";
+import api from "../../components/api";
 import Navbar from "./navbar";
 
 const ClientRegistrationForm = () => {
@@ -76,7 +76,7 @@ const ClientRegistrationForm = () => {
     return (
         <>
             <Navbar />
-            <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-2 sm:p-4">
+            <div className="flex min-h-screen pb-8 items-center justify-center overflow-hidden bg-black p-2 sm:p-4">
                 {/* Form */}
                 <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 shadow-md sm:p-8">
                     <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">Add New Client</h2>

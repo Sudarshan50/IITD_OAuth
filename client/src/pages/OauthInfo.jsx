@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Button, Tooltip, IconButton, Alert } from "@material-tailwind/react";
-import { SunIcon, MoonIcon, ClipboardIcon } from "@heroicons/react/20/solid";
+import { ClipboardIcon, MoonIcon, SunIcon } from "@heroicons/react/20/solid";
+import { Alert, Button, IconButton, Tooltip } from "@material-tailwind/react";
 import Prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css"; // Dark theme for code highlighting
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Sample OAuth code snippet
@@ -83,7 +83,7 @@ const OauthInfo = () => {
 
     return (
         <div
-            className={`${darkMode ? "bg-[#121212] text-gray-300" : "bg-gray-50 text-gray-800"} min-h-screen font-sans transition-all`} // Set a nice font family
+            className={`${darkMode ? "bg-[#121212] text-gray-300" : "bg-gray-50 text-gray-800"} min-h-screen pb-8 font-sans transition-all`} // Set a nice font family
         >
             {/* Enhanced Navbar */}
             <nav className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 px-1 py-2 shadow-lg sm:p-4">

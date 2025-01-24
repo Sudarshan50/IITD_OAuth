@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { Spinner } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../components/api";
 import Navbar from "./navbar";
-import { Spinner } from "@material-tailwind/react";
 
 // Simulating a function to fetch client data (replace with your API call)
 
@@ -13,34 +13,34 @@ const EditClientForm = () => {
     const [clientData, setClientData] = useState({});
     const [loading, setLoading] = useState(false);
 
-    const fetchClientData = async () => {
-        try {
-            setLoading(true);
-            api.get(`/admin/client/${client_id}`)
-                .then((res) => {
-                    if (res.status === 200) {
-                        setClientData(res.data);
-                        setClientData((prevData) => ({
-                            ...prevData,
-                            client_id: client_id,
-                        }));
-                        setLoading(false);
-                    }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    setLoading(false);
-                    toast.error("Failed to fetch client data");
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } catch (err) {
-            setLoading(false);
-            toast.error("Failed to fetch client data");
-        }
-    };
     useEffect(() => {
+        const fetchClientData = async () => {
+            try {
+                setLoading(true);
+                api.get(`/admin/client/${client_id}`)
+                    .then((res) => {
+                        if (res.status === 200) {
+                            setClientData(res.data);
+                            setClientData((prevData) => ({
+                                ...prevData,
+                                client_id: client_id,
+                            }));
+                            setLoading(false);
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        setLoading(false);
+                        toast.error("Failed to fetch client data");
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            } catch {
+                setLoading(false);
+                toast.error("Failed to fetch client data");
+            }
+        };
         fetchClientData();
     }, [client_id]);
 
@@ -103,7 +103,7 @@ const EditClientForm = () => {
 
     if (loading) {
         return (
-            <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
+            <div className="flex min-h-screen pb-8 items-center justify-center overflow-hidden bg-black p-4">
                 <Spinner className="h-12 w-12 text-white" />
             </div>
         );
@@ -112,7 +112,7 @@ const EditClientForm = () => {
     return (
         <>
             <Navbar />
-            <div className="flex min-h-[calc(94.84vh-1px)] items-center justify-center overflow-hidden bg-black p-4">
+            <div className="flex min-h-screen pb-8 items-center justify-center overflow-hidden bg-black p-4">
                 {/* Form */}
                 <div className="w-full max-w-lg rounded-lg bg-gray-900 px-3 py-6 shadow-md sm:p-8">
                     <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">Edit Client Details</h2>

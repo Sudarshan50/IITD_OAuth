@@ -1,48 +1,50 @@
-import { useLocation } from "react-router-dom";
-import logo from "../pages/devclub_logo.png";
-import { useEffect, useState } from "react";
-import api from "../components/api";
 import { Spinner } from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import api from "../components/api";
 import { MSLoginButton } from "../components/MSLoginButton";
-import { toast } from "react-toastify";
+import logo from "../pages/devclub_logo.png";
 
 const SignIn = () => {
     const [clientName, setClientName] = useState("");
     const [verifyError, setVerifyError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const client_id = query.get("client_id");
     const redirect_uri = query.get("redirect_uri");
 
-
-    const fetchClientInfo = async () => {
-        setLoading(true);
-        await api
-            .post(`/auth/verify`, { client_id, redirect_uri })
-            .then((res) => {
-                if (res.status === 200) {
-                    setClientName(res.data.message);
-                }
-            })
-            .catch((err) => {
-                setVerifyError(err.response?.data || "Error verifying client");
-            })
-            .finally(() => setLoading(false));
-    };
+    useEffect(() => {
+        const fetchClientInfo = async () => {
+            setLoading(true);
+            await api
+                .post(`/auth/verify`, { client_id, redirect_uri })
+                .then((res) => {
+                    if (res.status === 200) {
+                        setClientName(res.data.message);
+                    }
+                })
+                .catch((err) => {
+                    setVerifyError(err.response?.data || "Error verifying client");
+                })
+                .finally(() => setLoading(false));
+        }
+        fetchClientInfo();
+    }, [client_id, redirect_uri]);
 
     useEffect(() => {
-        fetchClientInfo();
-    }, []);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        toast.warn("Login Via Microsoft");
-    };
+        const docTitle = document.title;
+        if (clientName) {
+            document.title = `${clientName} | Oauth Login`;
+            return () => {
+                document.title = docTitle;
+            }
+        }
+    }, [clientName])
 
     if (loading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500">
                 <div className="flex items-center justify-center rounded-xl bg-white p-8 shadow-2xl">
                     <Spinner className="h-12 w-12" />
                 </div>
@@ -52,7 +54,7 @@ const SignIn = () => {
 
     if (verifyError) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500">
                 <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl">
                     <h2 className="mb-4 text-center text-2xl font-semibold text-gray-800">{verifyError}</h2>
                 </div>
@@ -60,21 +62,23 @@ const SignIn = () => {
         );
     }
 
+
     return (
-        <div className="flex min-h-screen flex-col justify-between bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        <div className="flex min-h-screen pb-8 flex-col justify-between bg-gray-500">
             {/* Login Section */}
             <div className="flex flex-grow items-center justify-center px-4 py-8">
-                <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-lg md:flex-row">
+                <div className="flex w-full max-w-4xl flex-col overflow-hidden min-h-[60dvh] rounded-lg bg-white shadow-lg md:flex-row">
                     {/* Left side: Login Form */}
                     <div className="w-full p-8 md:w-1/2">
                         <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {clientName}</h2>
+                        <p className="text-gray-500 mb-6">
+                            Use IITD Microsoft account to login (@iitd.ac.in)</p>
 
                         {/* Login Form */}
-                        <form
+                        {/* <form
                             onSubmit={handleSubmit}
                             className="space-y-6"
                         >
-                            {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Email</label>
                                 <input
@@ -85,7 +89,6 @@ const SignIn = () => {
                                 />
                             </div>
 
-                            {/* Password */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Password</label>
                                 <input
@@ -96,7 +99,6 @@ const SignIn = () => {
                                 />
                             </div>
 
-                            {/* Submit Button */}
                             <div>
                                 <button
                                     type="submit"
@@ -106,6 +108,7 @@ const SignIn = () => {
                                 </button>
                             </div>
                         </form>
+                         */}
 
                         {/* Microsoft Login Button */}
                         <div className="mt-6">
