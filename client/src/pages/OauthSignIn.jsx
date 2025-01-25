@@ -67,9 +67,9 @@ const SignIn = () => {
         <div className="flex min-h-screen pb-8 flex-col justify-between bg-gray-500">
             {/* Login Section */}
             <div className="flex flex-grow items-center justify-center px-4 py-8">
-                <div className="flex w-full max-w-4xl flex-col overflow-hidden min-h-[60dvh] rounded-lg bg-white shadow-lg md:flex-row">
+                <div className="flex w-full max-w-4xl flex-col overflow-hidden md:min-h-[60dvh] rounded-lg bg-white shadow-lg md:flex-row">
                     {/* Left side: Login Form */}
-                    <div className="w-full p-8 md:w-1/2">
+                    <div className="w-full p-5 md:p-8 md:w-1/2">
                         <h2 className="mb-6 text-3xl font-bold text-gray-700">Login to {clientName}</h2>
                         <p className="text-gray-500 mb-6">
                             Use IITD Microsoft account to login (@iitd.ac.in)</p>
@@ -120,7 +120,7 @@ const SignIn = () => {
                     </div>
 
                     {/* Right side: Image */}
-                    <div className="flex w-full items-center justify-center p-4 md:w-1/2 md:p-0">
+                    <div className="flex w-full items-center justify-center p-4 md:w-1/2 md:p-2">
                         <img
                             src={logo}
                             alt="DevClub Logo"
