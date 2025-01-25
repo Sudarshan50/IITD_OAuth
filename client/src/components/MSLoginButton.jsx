@@ -107,15 +107,15 @@ export const MSLoginButton = ({ client_id, redirect_uri }) => {
         );
     }
     return (
-        <>
+        <div className="lg-max:text-sm">
             {
                 activeAccount ? (
                     <button
                         onClick={() => handleMSLoginWithAccount(activeAccount)}
                         className="flex w-full mb-3 items-center justify-center rounded-md bg-gray-700 px-4 py-3 font-semibold text-white hover:bg-gray-900"
                     >
-                        <MSSVG />
-                        <span className="line-clamp-1">Continue with {activeAccount.username}</span>
+                        <span><MSSVG /></span>
+                        <span className="w-full line-clamp-2">Continue with {activeAccount.username}</span>
                     </button>
                 ) : <></>
             }
@@ -124,11 +124,11 @@ export const MSLoginButton = ({ client_id, redirect_uri }) => {
                 className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
             >
                 <MSSVG />
-                {
+                <span className="w-full line-clamp-2">{
                     activeAccount ? "Login with another account" :
-                        "Login with Microsoft"}
+                        "Login with Microsoft"}</span>
             </button>
-        </>
+        </div>
     );
 };
 
