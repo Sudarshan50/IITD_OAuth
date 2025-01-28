@@ -15,8 +15,11 @@ const OnboardingForm = () => {
         token: token,
     });
 
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("User");
+    const [kerberos, setKerberos] = useState("aa10001");
     const [loading, setLoading] = useState(false);
+
+    const isHostelRequired = kerberos ? kerberos.match(/\d{4}$/) : true
 
     useEffect(() => {
         try {
@@ -27,6 +30,7 @@ const OnboardingForm = () => {
                 return navigate(`/signin?client_id=${payload.client_id}&redirect_uri=${payload.redirect_uri}`);
             }
             setUsername(payload.username);
+            setKerberos(payload.kerberos || "aa10001");
         } catch {
             console.log("Error decoding token");
             setTimeout(() => {
@@ -45,7 +49,7 @@ const OnboardingForm = () => {
         try {
             setLoading(true);
             await api
-                .post("auth/onboarding", formData)
+                .post("auth/onboarding", { ...formData, hostel: isHostelRequired ? formData.hostel : "not_applicable" })
                 .then((res) => {
                     if (res.status === 200 || res.status === 208) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
@@ -85,7 +89,7 @@ const OnboardingForm = () => {
                     className="mt-6 space-y-4"
                 >
                     {/* Hostel */}
-                    <div>
+                    {isHostelRequired && <div>
                         <label className="block text-sm font-medium text-gray-700">Hostel</label>
                         <select
                             name="hostel"
@@ -97,29 +101,31 @@ const OnboardingForm = () => {
                             <option
                                 value=""
                                 disabled
+                                selected={formData.hostel === ""}
                             >
                                 Select your hostel
                             </option>
+                            <option value="day_scholar">Day Scholar</option>
                             <option value="aravali">Aravali</option>
+                            <option value="dronagiri">Dronagiri</option>
                             <option value="girnar">Girnar</option>
+                            <option value="himadri">Himadri</option>
                             <option value="jwalamukhi">Jwalamukhi</option>
+                            <option value="kailash">Kailash</option>
                             <option value="karakoram">Karakoram</option>
                             <option value="kumaon">Kumaon</option>
+                            <option value="nalanda">Nalanda</option>
                             <option value="nilgiri">Nilgiri</option>
-                            <option value="shivalik">Shivalik</option>
+                            {/* <option value="not_applicable">Not Applicable</option> */}
+                            <option value="sahyadri">Sahyadri</option>
                             <option value="satpura">Satpura</option>
+                            <option value="saptagiri">Saptagiri</option>
+                            <option value="shivalik">Shivalik</option>
                             <option value="udaigiri">Udaigiri</option>
                             <option value="vindhyachal">Vindhyachal</option>
                             <option value="zanskar">Zanskar</option>
-                            <option value="dronagiri">Dronagiri</option>
-                            <option value="saptagiri">Saptagiri</option>
-                            <option value="kailash">Kailash</option>
-                            <option value="sahyadri">Sahyadri</option>
-                            <option value="himadri">Himadri</option>
-                            <option value="nalanda">Nalanda</option>
-                            <option value="saptagiri">Saptagiri</option>
                         </select>
-                    </div>
+                    </div>}
 
                     {/* Date of Birth */}
                     <div>
@@ -135,7 +141,7 @@ const OnboardingForm = () => {
                     </div>
 
                     {/* Instagram ID */}
-                    <div>
+                    {/* <div>
                         <label className="block text-sm font-medium text-gray-700">Instagram ID</label>
                         <input
                             type="text"
@@ -145,7 +151,7 @@ const OnboardingForm = () => {
                             placeholder="Enter your Instagram ID (optional)"
                             className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         />
-                    </div>
+                    </div> */}
 
                     {/* Mobile Number */}
                     <div>

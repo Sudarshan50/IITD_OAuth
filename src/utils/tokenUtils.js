@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-const generateOnboardingToken = (user,client_id,redirect_uri) => {
+const generateOnboardingToken = (user, client_id, redirect_uri) => {
   const payload = {
     sub: user._id,
-    username : user.username,
+    username: user.username,
+    kerberos: user.kerberosId,
     client_id,
     redirect_uri,
     iss: "https://iitdoauth.vercel.app", // TODO: Change this to your domain
@@ -34,3 +35,4 @@ const verifyOnboardingToken = (token) => {
 };
 
 export { generateOnboardingToken, verifyOnboardingToken };
+
