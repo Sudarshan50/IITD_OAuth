@@ -1,21 +1,21 @@
-import oauth_client from "../models/oauth_client.js";
+import axios from "axios";
 import bcrypt from "bcryptjs";
+import { check, validationResult } from "express-validator";
+import oauth_client from "../models/oauth_client.js";
+import User from "../models/user.js";
 import {
   generateAuthorizationCode,
   useAuthorizationCode,
 } from "../utils/authCodeUtils.js";
-import User from "../models/user.js";
+import { logUserAction } from "../utils/logFunction.js";
 import {
   generateStateParameter,
   validateStateParameter,
 } from "../utils/stateManager.js";
-import { logUserAction } from "../utils/logFunction.js";
-import { validationResult, check } from "express-validator";
 import {
   generateOnboardingToken,
   verifyOnboardingToken,
 } from "../utils/tokenUtils.js";
-import axios from "axios";
 
 let auth = {};
 
@@ -57,7 +57,7 @@ auth.authorize = async (req, res) => {
       await user.save();
       await logUserAction(user._id, req.body.client_id, "User Created");
     }
-    const clientGrantCheck = await oauth_client.findOne({clientId: req.body.client_id});
+    const clientGrantCheck = await oauth_client.findOne({ clientId: req.body.client_id });
     if (!user.completedOnboarding && !clientGrantCheck?.grants?.includes("ONB302")) {
       const token = generateOnboardingToken(
         user,
@@ -141,6 +141,7 @@ auth.client_auth_verify = [
             name: user?.username,
             email: user?.email,
             hostel: user?.hostel,
+            kerberos: user?.kerberosId,
             dateOfBirth: user?.dateOfBirth,
             instagramId: user?.instagramId,
             mobileNo: user?.mobileNo,
@@ -180,6 +181,8 @@ auth.onboarding = [
       "himadri",
       "nalanda",
       "saptagiri",
+      "day_scholar",
+      "not_applicable"
     ])
     .notEmpty(),
   check("dateOfBirth").isDate().notEmpty(),
@@ -203,7 +206,16 @@ auth.onboarding = [
       if (user.completedOnboarding) {
         return res.status(208).json("User already onboarded");
       }
-      const { hostel, dateOfBirth, instagramId, mobileNo } = req.body;
+      const { dateOfBirth, instagramId, mobileNo } = req.body;
+      let hostel = req.body.hostel;
+
+      // Kerberos is assumed to be ending with 4 digits for students only. proffesors will not have last 4 chars as digits.
+      const isHostelRequired = user.kerberosId.match(/\d{4}$/)
+      if (!isHostelRequired) {
+        hostel = "not_applicable";
+      } else if (hostel == "not_applicable") {
+        return res.status(400).json("hostel is required");
+      }
 
       user.hostel = hostel;
       user.dateOfBirth = dateOfBirth;
