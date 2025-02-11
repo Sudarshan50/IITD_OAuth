@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "./api";
-
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import "dayjs/locale/en-gb";
+import dayjs from "dayjs";
 const OnboardingForm = () => {
     const navigate = useNavigate();
     const token = new URLSearchParams(window.location.search).get("token");
@@ -19,7 +23,7 @@ const OnboardingForm = () => {
     const [kerberos, setKerberos] = useState("aa10001");
     const [loading, setLoading] = useState(false);
 
-    const isHostelRequired = kerberos ? kerberos.match(/\d{4}$/) : true
+    const isHostelRequired = kerberos ? kerberos.match(/\d{4}$/) : true;
 
     useEffect(() => {
         try {
@@ -46,6 +50,10 @@ const OnboardingForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData?.dateOfBirth) {
+            toast.error("Please enter your date of birth");
+            return;
+        }
         try {
             setLoading(true);
             await api
@@ -70,14 +78,14 @@ const OnboardingForm = () => {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-gray-500 p-4 pb-8">
                 <Spinner className="h-12 w-12 text-white" />
             </div>
         );
     }
 
     return (
-        <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-gray-500 p-4 pb-8">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
                 <h2 className="mb-4 text-center text-2xl font-semibold text-gray-700">Onboarding Form</h2>
                 <p className="text-center text-gray-600">
@@ -89,55 +97,60 @@ const OnboardingForm = () => {
                     className="mt-6 space-y-4"
                 >
                     {/* Hostel */}
-                    {isHostelRequired && <div>
-                        <label className="block text-sm font-medium text-gray-700">Hostel</label>
-                        <select
-                            name="hostel"
-                            value={formData.hostel}
-                            onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            required
-                        >
-                            <option
-                                value=""
-                                disabled
-                                selected={formData.hostel === ""}
+                    {isHostelRequired && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Hostel</label>
+                            <select
+                                name="hostel"
+                                value={formData.hostel}
+                                onChange={handleChange}
+                                className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                required
                             >
-                                Select your hostel
-                            </option>
-                            <option value="day_scholar">Day Scholar</option>
-                            <option value="aravali">Aravali</option>
-                            <option value="dronagiri">Dronagiri</option>
-                            <option value="girnar">Girnar</option>
-                            <option value="himadri">Himadri</option>
-                            <option value="jwalamukhi">Jwalamukhi</option>
-                            <option value="kailash">Kailash</option>
-                            <option value="karakoram">Karakoram</option>
-                            <option value="kumaon">Kumaon</option>
-                            <option value="nalanda">Nalanda</option>
-                            <option value="nilgiri">Nilgiri</option>
-                            {/* <option value="not_applicable">Not Applicable</option> */}
-                            <option value="sahyadri">Sahyadri</option>
-                            <option value="satpura">Satpura</option>
-                            <option value="saptagiri">Saptagiri</option>
-                            <option value="shivalik">Shivalik</option>
-                            <option value="udaigiri">Udaigiri</option>
-                            <option value="vindhyachal">Vindhyachal</option>
-                            <option value="zanskar">Zanskar</option>
-                        </select>
-                    </div>}
+                                <option
+                                    value=""
+                                    disabled
+                                    selected={formData.hostel === ""}
+                                >
+                                    Select your hostel
+                                </option>
+                                <option value="day_scholar">Day Scholar</option>
+                                <option value="aravali">Aravali</option>
+                                <option value="dronagiri">Dronagiri</option>
+                                <option value="girnar">Girnar</option>
+                                <option value="himadri">Himadri</option>
+                                <option value="jwalamukhi">Jwalamukhi</option>
+                                <option value="kailash">Kailash</option>
+                                <option value="karakoram">Karakoram</option>
+                                <option value="kumaon">Kumaon</option>
+                                <option value="nalanda">Nalanda</option>
+                                <option value="nilgiri">Nilgiri</option>
+                                {/* <option value="not_applicable">Not Applicable</option> */}
+                                <option value="sahyadri">Sahyadri</option>
+                                <option value="satpura">Satpura</option>
+                                <option value="saptagiri">Saptagiri</option>
+                                <option value="shivalik">Shivalik</option>
+                                <option value="udaigiri">Udaigiri</option>
+                                <option value="vindhyachal">Vindhyachal</option>
+                                <option value="zanskar">Zanskar</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Date of Birth */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                        <input
-                            type="date"
-                            name="dateOfBirth"
-                            value={formData.dateOfBirth}
-                            onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            required
-                        />
+                    <div className="mt-4">
+                        <LocalizationProvider
+                            dateAdapter={AdapterDayjs}
+                            adapterLocale={"en-gb"}
+                        >
+                            <DatePicker
+                                value={dayjs(formData.dateOfBirth)}
+                                onChange={(newValue) =>
+                                    setFormData({ ...formData, dateOfBirth: newValue?.format("YYYY-MM-DD") })
+                                }
+                                label="Enter your DOB"
+                            />
+                        </LocalizationProvider>
                     </div>
 
                     {/* Instagram ID */}
