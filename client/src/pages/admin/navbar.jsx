@@ -1,11 +1,10 @@
-import { Button } from "@material-tailwind/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
-import cookie from "js-cookie";
+import { Button } from "@material-tailwind/react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { default as cookie, default as Cookies } from "js-cookie";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -60,6 +59,15 @@ const Navbar = () => {
                             onClick={() => navigate("/admin/dashboard")}
                         >
                             Home
+                        </Button>
+                    )}
+
+                    {pathname !== "/admin/user/create" && (
+                        <Button
+                            className="rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-gray-900 hover:bg-yellow-500"
+                            onClick={() => navigate("/admin/user/create")}
+                        >
+                            Create User
                         </Button>
                     )}
                     {pathname !== "/admin/reg" && (

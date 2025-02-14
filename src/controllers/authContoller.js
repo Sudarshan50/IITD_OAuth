@@ -7,6 +7,7 @@ import {
   generateAuthorizationCode,
   useAuthorizationCode,
 } from "../utils/authCodeUtils.js";
+import { HOSTELS } from "../utils/hostels.js";
 import { logUserAction } from "../utils/logFunction.js";
 import {
   generateStateParameter,
@@ -91,6 +92,47 @@ auth.authorize = async (req, res) => {
     res.status(500).json("An error occurred");
   }
 };
+
+auth.loginWithPassword = [
+  check("username").isString().notEmpty(),
+  check("password").isString().notEmpty(),
+  check("client_id").isString().notEmpty(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json("Invalid Request");
+      }
+      const { username, password, client_id } = req.body;
+      const user = await User.findOne({ kerberosId: username });
+      if (!user) {
+        return res.status(400).json("Invalid username or password.");
+      }
+      if (!user.allowedPasswordLogin) {
+        return res.status(400).json("Password login not allowed. Please use Microsoft Login");
+      }
+      const checkPassword = await user.comparePassword(password);
+      if (!checkPassword) {
+        return res.status(400).json("Invalid username or password.");
+      }
+      const client = await oauth_client.findOne({ clientId: client_id });
+      if (!client) {
+        return res.status(400).json("Invalid Client ID");
+      }
+      const state = await generateStateParameter();
+      const auth_code = await generateAuthorizationCode(client_id, user._id);
+      await logUserAction(user._id, client_id, "Credentials Login Initiated");
+      res.status(200).json({
+        auth_code,
+        state,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json("An error occurred");
+    }
+  },
+];
+
 auth.client_auth_verify = [
   check("client_id").isString().notEmpty(),
   check("auth_code").isString().notEmpty(),
@@ -162,28 +204,7 @@ auth.client_auth_verify = [
 auth.onboarding = [
   check("hostel")
     .isString()
-    .isIn([
-      "aravali",
-      "girnar",
-      "jwalamukhi",
-      "karakoram",
-      "kumaon",
-      "nilgiri",
-      "shivalik",
-      "satpura",
-      "udaigiri",
-      "vindhyachal",
-      "zanskar",
-      "dronagiri",
-      "saptagiri",
-      "kailash",
-      "sahyadri",
-      "himadri",
-      "nalanda",
-      "saptagiri",
-      "day_scholar",
-      "not_applicable"
-    ])
+    .isIn(HOSTELS)
     .notEmpty(),
   check("dateOfBirth").isDate().notEmpty(),
   check("instagramId").isString().optional(),

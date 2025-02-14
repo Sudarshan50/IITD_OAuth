@@ -10,6 +10,7 @@ oAuthRouter.post(
   verifyClientMiddleware,
   auth.authorize
 );
+oAuthRouter.post("/login", auth.loginWithPassword);
 oAuthRouter.post("/verify", verifyClientMiddleware, auth.verify);
 oAuthRouter.post("/resource", auth.client_auth_verify);
 oAuthRouter.post("/onboarding", auth.onboarding);

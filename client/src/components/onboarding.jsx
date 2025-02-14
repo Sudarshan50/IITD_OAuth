@@ -1,13 +1,13 @@
 import { Spinner } from "@material-tailwind/react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import "dayjs/locale/en-gb";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "./api";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import "dayjs/locale/en-gb";
-import dayjs from "dayjs";
 const OnboardingForm = () => {
     const navigate = useNavigate();
     const token = new URLSearchParams(window.location.search).get("token");
@@ -139,16 +139,18 @@ const OnboardingForm = () => {
 
                     {/* Date of Birth */}
                     <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+
                         <LocalizationProvider
                             dateAdapter={AdapterDayjs}
                             adapterLocale={"en-gb"}
                         >
                             <DatePicker
+                                className="w-full"
                                 value={dayjs(formData.dateOfBirth)}
                                 onChange={(newValue) =>
                                     setFormData({ ...formData, dateOfBirth: newValue?.format("YYYY-MM-DD") })
                                 }
-                                label="Enter your DOB"
                             />
                         </LocalizationProvider>
                     </div>

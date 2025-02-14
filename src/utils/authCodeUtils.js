@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { redisClient } from "../lib/redis.js";
 
 export async function generateAuthorizationCode(clientId, userId) {
-  const code = crypto.randomBytes(20).toString("base64url");
+  const code = crypto.randomBytes(20).toString("hex");
   const authCodeData = {
     clientId,
     userId,

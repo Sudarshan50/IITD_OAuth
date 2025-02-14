@@ -1,0 +1,22 @@
+export const HOSTELS = [
+    "aravali",
+    "girnar",
+    "jwalamukhi",
+    "karakoram",
+    "kumaon",
+    "nilgiri",
+    "shivalik",
+    "satpura",
+    "udaigiri",
+    "vindhyachal",
+    "zanskar",
+    "dronagiri",
+    "saptagiri",
+    "kailash",
+    "sahyadri",
+    "himadri",
+    "nalanda",
+    "saptagiri",
+    "day_scholar",
+    "not_applicable"
+]

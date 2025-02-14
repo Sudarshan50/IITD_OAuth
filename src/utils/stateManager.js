@@ -1,19 +1,10 @@
+import { error } from "console";
 import crypto from "crypto";
 import { redisClient } from "../lib/redis.js";
-import { error } from "console";
-
-// Helper function to Base64 URL encode a buffer
-function base64URLEncode(buffer) {
-  return buffer
-    .toString("base64")
-    .replace(/\+/g, "-") // Replace + with -
-    .replace(/\//g, "_") // Replace / with _
-    .replace(/=+$/, ""); // Remove padding characters (=)
-}
 
 // Generate State Parameter using Base64 URL encoding
 export async function generateStateParameter() {
-  const state = base64URLEncode(crypto.randomBytes(20));
+  const state = (crypto.randomBytes(20)).toString("hex");
 
   await redisClient.set(`state:${state}`, "true", "EX", 120);
   return state;

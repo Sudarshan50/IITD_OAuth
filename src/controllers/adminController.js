@@ -1,13 +1,14 @@
-import OAuthClient from "../models/oauth_client.js";
-import log from "../models/log.js";
-import User from "../models/user.js";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
-import Admin from "../models/admin.js";
+import crypto, { randomBytes } from "crypto";
+import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { logAdminAction } from "../utils/superAdminLogger.js";
+import Admin from "../models/admin.js";
 import AdminLogs from "../models/admin_logs.js";
-import { validationResult, query, check } from "express-validator";
+import log from "../models/log.js";
+import OAuthClient from "../models/oauth_client.js";
+import User from "../models/user.js";
+import { HOSTELS } from "../utils/hostels.js";
+import { logAdminAction } from "../utils/superAdminLogger.js";
 
 let admin = {};
 
@@ -256,6 +257,65 @@ admin.getAllLogs = async (req, res) => {
   }
 };
 
+admin.createUserLogin = [
+  check("username").isString().notEmpty(),
+  check("password").isString().notEmpty().isLength({ min: 8 }),
+  check("name").isString().optional(),
+  check("email").isString().optional().isEmail(),
+  check("hostel")
+    .isString()
+    .isIn(HOSTELS)
+    .optional(),
+  check("dateOfBirth").isDate().optional(),
+  check("instagramId").isString().optional(),
+  check("mobileNo").isMobilePhone().optional(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json(errors.array());
+      }
+      const { username, password, name, email, hostel, dateOfBirth, mobileNo } = req.body;
+      let findUser = await User.findOne({ kerberosId: username });
+      if (findUser) {
+        if (findUser.allowedPasswordLogin) {
+          return res.status(400).json("User login already exists");
+        }
+        findUser.password = password;  // Password gets hashed in the pre save hook
+        findUser.allowedPasswordLogin = true;
+        await findUser.save();
+        await logAdminAction(
+          req.admin,
+          "User login created successfully",
+          `Kerberos ID: ${findUser.kerberosId}`
+        )
+        return res.status(200).json("User login created successfully");
+      }
+      findUser = new User({
+        username: name || username,
+        email: email,
+        kerberosId: username,
+        password: password,
+        hostel: hostel || "not_applicable",
+        dateOfBirth: dateOfBirth || new Date(),
+        mobileNo: mobileNo || "0000000000",
+        msId: randomBytes(20).toString("base64url"),
+        allowedPasswordLogin: true,
+      });
+      await findUser.save();
+      await logAdminAction(
+        req.admin,
+        "User login created successfully",
+        `Kerberos ID: ${findUser.kerberosId}`
+      )
+      return res.status(201).json("User login created successfully");
+    } catch (err) {
+      console.log(err);
+      res.status(500).json("Internal Server Error");
+    }
+  }
+];
+
 admin.getAllUsers = async (req, res) => {
   try {
     if (req.permission_code !== "superadmin") {
@@ -268,8 +328,6 @@ admin.getAllUsers = async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 };
-
-export default admin;
 
 admin.verify = async (req, res) => {
   try {
@@ -315,3 +373,6 @@ admin.getAllAdminLogs = async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 };
+
+
+export default admin;

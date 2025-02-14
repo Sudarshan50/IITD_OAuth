@@ -8,6 +8,7 @@ import OnboardingForm from "./components/onboarding";
 import MSSuccessPage from "./pages/MSSuccessPage";
 import OauthInfo from "./pages/OauthInfo";
 import SignIn from "./pages/OauthSignIn";
+import CreateUser from "./pages/admin/CreateUser";
 import AdminSignIn from "./pages/admin/SignIn";
 import Dashboard from "./pages/admin/dashboard";
 import ClientRegistrationForm from "./pages/admin/registeration";
@@ -65,6 +66,10 @@ function App() {
                         <Route
                             path="reg"
                             element={<ClientRegistrationForm />}
+                        />
+                        <Route
+                            path="user/create"
+                            element={<CreateUser />}
                         />
                         <Route
                             path="edit_client/:client_id"

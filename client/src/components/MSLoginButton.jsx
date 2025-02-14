@@ -85,7 +85,7 @@ export const MSLoginButton = ({ client_id, redirect_uri }) => {
                         .catch((err) => {
                             console.log(err);
                             setValidating(3);
-                            toast.error(err.response?.data?.message || "Error Logging in with Microsoft (Code: CB500)");
+                            toast.error(err.response?.data || "Error Logging in with Microsoft (Code: CB500)");
                         })
                 } else {
                     setValidating(0);
