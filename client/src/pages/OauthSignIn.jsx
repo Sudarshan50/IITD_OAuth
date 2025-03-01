@@ -67,7 +67,7 @@ const SignIn = () => {
 
     if (loading) {
         return (
-            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500">
+            <div className="flex min-h-screen pb-8 items-center justify-center bg-black">
                 <div className="flex items-center justify-center rounded-xl bg-white p-8 shadow-2xl">
                     <Spinner className="h-12 w-12" />
                 </div>
@@ -77,7 +77,7 @@ const SignIn = () => {
 
     if (verifyError) {
         return (
-            <div className="flex min-h-screen pb-8 items-center justify-center bg-gray-500">
+            <div className="flex min-h-screen pb-8 items-center justify-center bg-black">
                 <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl">
                     <h2 className="mb-4 text-center text-2xl font-semibold text-gray-800">{verifyError}</h2>
                 </div>
