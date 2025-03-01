@@ -87,7 +87,8 @@ const SignIn = () => {
 
 
     return (
-        <div className="flex min-h-screen pb-8 flex-col justify-between bg-gray-500">
+        
+        <div className="flex min-h-screen pb-8 flex-col justify-between bg-black">
             {/* Login Section */}
             <div className="flex flex-grow items-center justify-center px-4 py-8">
                 <div className="flex w-full max-w-4xl flex-col overflow-hidden md:min-h-[60dvh] rounded-lg bg-white shadow-lg md:flex-row">
