@@ -180,6 +180,8 @@ auth.client_auth_verify = [
         await logUserAction(userId, client_id, "Read Access Granted");
         return res.status(200).json({
           user: {
+            id: user.msId,
+            oauthId: user._id,
             name: user?.username,
             email: user?.email,
             hostel: user?.hostel,
@@ -225,7 +227,10 @@ auth.onboarding = [
       }
       const user = await User.findById(tokendata.sub);
       if (user.completedOnboarding) {
-        return res.status(208).json("User already onboarded");
+        return res.status(208).json({
+          message: "User has already completed onboarding",
+          redirect_uri: tokendata.redirect_uri,
+        });
       }
       const { dateOfBirth, instagramId, mobileNo } = req.body;
       let hostel = req.body.hostel;

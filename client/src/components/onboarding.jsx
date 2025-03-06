@@ -59,9 +59,14 @@ const OnboardingForm = () => {
             await api
                 .post("auth/onboarding", { ...formData, hostel: isHostelRequired ? formData.hostel : "not_applicable" })
                 .then((res) => {
-                    if (res.status === 200 || res.status === 208) {
+                    if (res.status === 200) {
                         window.location.href = `${res.data.redirect_uri}?code=${res.data.auth_code}&state=${res.data.state}`;
                         setLoading(false);
+                    } else if (res.status === 208) {
+                        const payloadBase64 = token.split(".")[1];
+                        const payload = JSON.parse(atob(payloadBase64));
+                        toast.error("User has already completed onboarding");
+                        return navigate(`/signin?client_id=${payload.client_id}&redirect_uri=${payload.redirect_uri}`);
                     }
                 })
                 .catch((err) => {

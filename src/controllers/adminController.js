@@ -97,7 +97,7 @@ admin.signUp = async (req, res) => {
     if (findAdmin) {
       return res.status(400).json("Admin already exists");
     }
-    const hashPass = await bcrypt.hash(password, 10);
+    const hashPass = await bcrypt.hash(password, 12);
     const newAdmin = new Admin({
       userName: userName,
       password: hashPass,
@@ -113,10 +113,10 @@ admin.getAllClients = async (req, res) => {
   try {
     const permission_code = req.permission_code;
     if (permission_code === "superadmin") {
-      const clients = await OAuthClient.find();
+      const clients = await OAuthClient.find().select("-clientSecretHash");
       return res.status(200).json(clients);
     } else if (permission_code === "admin") {
-      const clients = await OAuthClient.find({ owner: req.admin });
+      const clients = await OAuthClient.find({ owner: req.admin }).select("-clientSecretHash");
       return res.status(200).json(clients);
     }
   } catch (error) {
@@ -321,7 +321,7 @@ admin.getAllUsers = async (req, res) => {
     if (req.permission_code !== "superadmin") {
       return res.status(401).json("Unauthorized");
     }
-    const users = await User.find();
+    const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (error) {
     console.log(error);

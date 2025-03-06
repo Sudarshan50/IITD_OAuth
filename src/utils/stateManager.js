@@ -6,7 +6,7 @@ import { redisClient } from "../lib/redis.js";
 export async function generateStateParameter() {
   const state = (crypto.randomBytes(20)).toString("hex");
 
-  await redisClient.set(`state:${state}`, "true", "EX", 120);
+  await redisClient.set(`state:${state}`, "true", "EX", 60);
   return state;
 }
 
@@ -17,7 +17,7 @@ export async function validateStateParameter(state) {
     throw new Error("Invalid or expired state parameter", error);
   }
 
-  await redisClient.expire(`state:${state}`, 60);
+  await redisClient.del(`state:${state}`);
 
   return true; // State is valid
 }
