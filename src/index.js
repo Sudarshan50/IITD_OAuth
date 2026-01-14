@@ -9,9 +9,12 @@ import oAuthRouter from "./routes/oAuth.js";
 import session from "express-session";
 import methodOverride from "method-override";
 import { connectToRedis } from "./lib/redis.js";
+
+// Configure dotenv FIRST before using any environment variables
+dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 3000;
-dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
