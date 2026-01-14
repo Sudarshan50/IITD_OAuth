@@ -77,7 +77,7 @@ auth.authorize = async (req, res) => {
 
       // Cryptographic Encrypt user data and send it as response
       const crypto = require('crypto');
-      const algorithm = 'aes-256-gcm';
+      const algorithm = 'aes-256-cbc';
 
       const encKeyHex = process.env.ENCRYPTION_KEY;
       if (!encKeyHex || encKeyHex.length !== 64) {
