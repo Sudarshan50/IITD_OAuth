@@ -44,7 +44,13 @@ app.use("/api/auth", oAuthRouter);
 
 connectToRedis();
 db().then(() => {
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  // Only listen on port when not in Vercel (for local development)
+  if (process.env.VERCEL !== '1') {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
 });
+
+// Export the Express app for Vercel serverless
+export default app;
