@@ -59,6 +59,47 @@ auth.authorize = async (req, res) => {
       await logUserAction(user._id, req.body.client_id, "User Created");
     }
     const clientGrantCheck = await oauth_client.findOne({ clientId: req.body.client_id });
+    if (clientGrantCheck.grants.includes("ENC_TKN")) {
+      const payload = {
+        user: {
+          id: user.msId,
+          oauthId: user._id,
+          name: user?.username,
+          email: user?.email,
+          hostel: user?.hostel,
+          kerberos: user?.kerberosId,
+          dateOfBirth: user?.dateOfBirth,
+          instagramId: user?.instagramId,
+          mobileNo: user?.mobileNo,
+        },
+        exp: Math.floor(Date.now() / 1000) + (5 * 60) // Token valid for 5 minutes
+      }
+
+      // Cryptographic Encrypt user data and send it as response
+      const crypto = require('crypto');
+      const algorithm = 'aes-256-cbc';
+
+      const encKeyHex = process.env.ENCRYPTION_KEY;
+      if (!encKeyHex || encKeyHex.length !== 64) {
+        console.error("Invalid ENCRYPTION_KEY. It must be a 64 character hexadecimal string.");
+        return res.status(500).json("Encryption key error");
+      }
+      const encKey = Buffer.from(encKeyHex, 'hex');
+      const key = crypto.scryptSync(encKey, 'salt', 32);
+      const iv = crypto.randomBytes(16);
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
+      let encrypted = cipher.update(JSON.stringify(payload), 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      const encryptedData = encrypted;
+
+      const state = iv.toString('hex');
+
+      await logUserAction(user._id, req.body.client_id, "Encrypted Token Generated");
+      return res.status(200).json({
+        auth_code: encryptedData,
+        state,
+      });
+    }
     if (!user.completedOnboarding && !clientGrantCheck?.grants?.includes("ONB302")) {
       const token = generateOnboardingToken(
         user,
